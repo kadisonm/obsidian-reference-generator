@@ -1,8 +1,4 @@
-import { App, Editor, MarkdownView, Plugin, PluginSettingTab, Setting } from 'obsidian';
-
-var JSSoup = require('jssoup').default
-
-
+import { App, Menu, Editor, Notice, MarkdownView, Plugin, PluginSettingTab, Setting, requestUrl } from 'obsidian';
 
 interface ReferenceGeneratorSettings {
 	mySetting: string;
@@ -18,24 +14,21 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		this.addCommand({
-			id: 'generate-harvard-reference-from-link',
-			name: 'Generate Harvard Reference From Link',
-			callback: () => {
-				
-			}
-		});
-
-		this.addCommand({
-			id: 'generate-harvard-reference',
-			name: 'Generate Harvard Reference',
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				let reference = this.GenerateReference(editor.getSelection());
-				editor.replaceSelection(reference);
-			}
-		});
-
 		this.addSettingTab(new SampleSettingTab(this.app, this));
+
+		this.registerEvent(
+			this.app.workspace.on("editor-menu", (menu, editor, view) => {
+			  	menu.addItem((item) => {
+					item
+					.setTitle("Generate Harvard Reference")
+					.setIcon("document")
+					.onClick(async () => {
+						const reference = await this.generateReference(editor.getSelection());
+						editor.replaceSelection(reference);
+				  	});
+			    });
+			})
+		);
 	}
 
 	async loadSettings() {
@@ -46,23 +39,32 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-	GenerateReference(url : string) : string {
-		let result = "Failed";
+	async generateReference(url : string) {
+		const reference = {
+			firstName: "",
+			lastName: "",
+			published: "",
+			title: "",
+			siteName: "",
+			link: url
+		};
 
-		fetch(url)
-		.then(response => {
-			response.json()
-		})
-		.then(json=> {
-			console.log(json);
+		const result = await requestUrl(url);
+		const parser = new DOMParser();
+        const doc = parser.parseFromString(result.text, "text/html");
+	
+		// Author, date published. Title. [online] website name. Available at: URL.
+		// If no author then use site name.
 
-			result = "Worked";
-		})
-		.catch(error => {
-			result = "Cannot get URL";
-		})
+		//reference.firstName = + ". ";
+		//reference.lastName = + ", ";
+		//reference.published = "(" + __ + ").";
+		//reference.siteName = "" + ". ";
 
-		return result;
+		reference.title = doc.title + ". ";
+		reference.title = reference.title.replace(reference.siteName, ""); // Need to make it so it doesn't include the + ". ";
+
+		return `${reference.lastName}${reference.firstName}${reference.published}${reference.title}[online] ${reference.siteName}Available at: ${reference.link}`;
 	}
 }
 
