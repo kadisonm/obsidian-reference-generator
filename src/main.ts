@@ -1,5 +1,9 @@
 import { App, Editor, MarkdownView, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
+var JSSoup = require('jssoup').default
+
+
+
 interface ReferenceGeneratorSettings {
 	mySetting: string;
 }
@@ -14,22 +18,20 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
-			id: 'open-sample-modal-simple',
-			name: 'Open sample modal (simple)',
+			id: 'generate-harvard-reference-from-link',
+			name: 'Generate Harvard Reference From Link',
 			callback: () => {
 				
 			}
 		});
 
-		// This adds an editor command that can perform some operation on the current editor instance
 		this.addCommand({
-			id: 'sample-editor-command',
-			name: 'Sample editor command',
+			id: 'generate-harvard-reference',
+			name: 'Generate Harvard Reference',
 			editorCallback: (editor: Editor, view: MarkdownView) => {
-				console.log(editor.getSelection());
-				editor.replaceSelection('Sample Editor Command');
+				let reference = this.GenerateReference(editor.getSelection());
+				editor.replaceSelection(reference);
 			}
 		});
 
@@ -42,6 +44,25 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+
+	GenerateReference(url : string) : string {
+		let result = "Failed";
+
+		fetch(url)
+		.then(response => {
+			response.json()
+		})
+		.then(json=> {
+			console.log(json);
+
+			result = "Worked";
+		})
+		.catch(error => {
+			result = "Cannot get URL";
+		})
+
+		return result;
 	}
 }
 
