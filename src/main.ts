@@ -1,4 +1,5 @@
 import { App, Menu, Editor, Notice, MarkdownView, Plugin, PluginSettingTab, Setting, requestUrl } from 'obsidian';
+import { generateReference } from './generateReference';
 
 interface ReferenceGeneratorSettings {
 	mySetting: string;
@@ -18,15 +19,17 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 
 		this.registerEvent(
 			this.app.workspace.on("editor-menu", (menu, editor, view) => {
-			  	menu.addItem((item) => {
-					item
-					.setTitle("Generate Harvard Reference")
-					.setIcon("document")
-					.onClick(async () => {
-						const reference = await this.generateReference(editor.getSelection());
-						editor.replaceSelection(reference);
-				  	});
-			    });
+				if (editor.getSelection().length > 0) {
+					menu.addItem((item) => {
+						item
+						.setTitle("Generate Harvard Reference")
+						.setIcon("document")
+						.onClick(async () => {
+							const reference = await generateReference(editor.getSelection());
+							editor.replaceSelection(reference);
+						});
+					});
+				}
 			})
 		);
 	}
@@ -37,34 +40,6 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
-	}
-
-	async generateReference(url : string) {
-		const reference = {
-			firstName: "",
-			lastName: "",
-			published: "",
-			title: "",
-			siteName: "",
-			link: url
-		};
-
-		const result = await requestUrl(url);
-		const parser = new DOMParser();
-        const doc = parser.parseFromString(result.text, "text/html");
-	
-		// Author, date published. Title. [online] website name. Available at: URL.
-		// If no author then use site name.
-
-		//reference.firstName = + ". ";
-		//reference.lastName = + ", ";
-		//reference.published = "(" + __ + ").";
-		//reference.siteName = "" + ". ";
-
-		reference.title = doc.title + ". ";
-		reference.title = reference.title.replace(reference.siteName, ""); // Need to make it so it doesn't include the + ". ";
-
-		return `${reference.lastName}${reference.firstName}${reference.published}${reference.title}[online] ${reference.siteName}Available at: ${reference.link}`;
 	}
 }
 
