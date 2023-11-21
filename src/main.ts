@@ -1,4 +1,4 @@
-import { Editor, Notice, MarkdownView, Plugin } from 'obsidian';
+import { Editor, Notice, MarkdownView, Plugin, Platform } from 'obsidian';
 import { generateReference } from './generateReference';
 import { SettingsTab, ReferenceGeneratorSettings, DEFAULT_SETTINGS } from "./settings";
 
@@ -54,9 +54,13 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		
 		const foundLinks = selection.match(/\bhttps?::\/\/\S+/gi) || selection.match(/\bhttps?:\/\/\S+/gi);
   
-		if (foundLinks == null)
+		if (foundLinks == null) {
+			new Notice("Not a link");
 			return;
+		}
 
+		this.notify("Generating (1/2)");
+			
 		// Removes duplicate links
 		let s = new Set(foundLinks);
 		let it = s.values();
@@ -64,6 +68,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 
 		
 		// Generates a reference for each link
+		
 		let replaceString = "";
 
 		for (var i = 0; i < links.length; i++) {
@@ -72,6 +77,16 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		}
 
 		//const reference = await generateReference(selection);
+		this.notify("Done (2/2)");
 		editor.replaceSelection(replaceString);
+	}
+
+	async notify(message: string) {
+		if (this.settings.enableDesktopNotifications && !Platform.isMobileApp) {
+			new Notice(message);
+		}
+		else if (this.settings.enableMobileNotifications && Platform.isMobileApp) {
+			new Notice(message);
+		}
 	}
 }

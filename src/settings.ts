@@ -1,12 +1,14 @@
-import { App, PluginSettingTab, Setting } from "obsidian";
+import { App, PluginSettingTab, Setting, Platform } from "obsidian";
 import ReferenceGeneratorPlugin from "./main";
 
 export interface ReferenceGeneratorSettings {
-	mySetting: string;
+	enableDesktopNotifications: boolean,
+    enableMobileNotifications: boolean,
 }
 
 export const DEFAULT_SETTINGS: ReferenceGeneratorSettings = {
-	mySetting: 'default'
+	enableDesktopNotifications: true,
+    enableMobileNotifications: true,
 }
 
 export class SettingsTab extends PluginSettingTab {
@@ -22,15 +24,36 @@ export class SettingsTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
-				.onChange(async (value) => {
-					this.plugin.settings.mySetting = value;
-					await this.plugin.saveSettings();
-				}));
+        // Enable Desktop Notifications
+        if (!Platform.isMobileApp) {
+            new Setting(containerEl)
+                .setName('Enable Desktop Notifications')
+                .setDesc('Enable notifications on desktop. (does not include errors)')
+                .addToggle((toggle) => {
+                    toggle
+                    .setValue(this.plugin.settings.enableDesktopNotifications)
+                    .onChange(async (val) => {
+                      this.plugin.settings.enableDesktopNotifications = val;
+                      await this.plugin.saveSettings();
+                      
+                    }); 
+                })
+        }	
+
+        // Enable Mobile Notifications
+        if (Platform.isMobileApp) {
+            new Setting(containerEl)
+                .setName('Enable Mobile Notifications')
+                .setDesc('Enable notifications on mobile. (does not include errors)')
+                .addToggle((toggle) => {
+                    toggle
+                    .setValue(this.plugin.settings.enableMobileNotifications)
+                    .onChange(async (val) => {
+                      this.plugin.settings.enableMobileNotifications = val;
+                      await this.plugin.saveSettings();
+                      
+                    }); 
+                })
+        }	
 	}
 }
