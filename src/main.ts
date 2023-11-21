@@ -81,7 +81,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		editor.replaceSelection(replaceString);
 	}
 
-	async notify(message: string) {
+	notify(message: string) {
 		if (this.settings.enableDesktopNotifications && !Platform.isMobileApp) {
 			new Notice(message);
 		}
