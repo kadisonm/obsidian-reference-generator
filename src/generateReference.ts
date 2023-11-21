@@ -1,5 +1,5 @@
 import { requestUrl } from 'obsidian';
-import { getDateMethod1, getDateMethod2 } from './getDates';
+import { getDateMethod1, getDateMethod2, getDateMethod3 } from './getDates';
 
 export const generateReference = async (url: string) => {
     const reference = {
@@ -24,13 +24,6 @@ export const generateReference = async (url: string) => {
     
     // Authors
 
-    // Date published
-    // Class: date-created, 
-    // Tag: Time
-    // Time Datetime
-    // Look for div containing _dateline
-    // No date: (n.d.)
-
     // Get the publication Date
     reference.published = getPublicationDate(doc);
 
@@ -46,17 +39,23 @@ export const generateReference = async (url: string) => {
 }
 
 function getPublicationDate(doc : Document) : string { 
+    // Method 1
     let result1 = getDateMethod1(doc);
-
     if (result1 != "")
         return "(" + result1 + "). ";
 
+    // Method 2
     let result2 = getDateMethod2(doc);
-
-    if (result1 != "")
+    if (result2 != "")
         return "(" + result2 + "). ";
 
-    return "";
+    // Method 3
+    let result3 = getDateMethod3(doc);
+    if (result3 != "")
+        return "(" + result3 + "). ";
+
+    // Cannot find
+    return "(n.d.). ";
 }
 
 function getTitle(doc : Document) : string {
@@ -81,6 +80,6 @@ function getSiteName(url : string) : string {
         domainName = domainName.charAt(0).toUpperCase() + domainName.slice(1);   
         domainName += ". "; 
     }
-    
+
     return domainName;
 }
