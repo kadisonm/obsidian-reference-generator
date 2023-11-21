@@ -1,4 +1,4 @@
-import { App, Menu, Editor, Notice, MarkdownView, Plugin, PluginSettingTab, Setting, requestUrl } from 'obsidian';
+import { Editor, Notice, MarkdownView, Plugin } from 'obsidian';
 import { generateReference } from './generateReference';
 import { SettingsTab, ReferenceGeneratorSettings, DEFAULT_SETTINGS } from "./settings";
 
@@ -20,8 +20,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 			
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				if (editor.getSelection().length > 0) {
-					const reference = await generateReference(editor.getSelection());
-					editor.replaceSelection(reference);
+					this.replaceLinks(editor);
 				}
 			},
 		});
@@ -34,10 +33,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 						item
 						.setTitle("Generate Harvard Reference")
 						.setIcon(logo)
-						.onClick(async () => {
-							const reference = await generateReference(editor.getSelection());
-							editor.replaceSelection(reference);
-						});
+						.onClick(async () => this.replaceLinks(editor));
 					});
 				}
 			})
@@ -50,5 +46,32 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+
+	async replaceLinks(editor: Editor) {
+		// Finds links within selection
+		const selection = editor.getSelection();
+		
+		const foundLinks = selection.match(/\bhttps?::\/\/\S+/gi) || selection.match(/\bhttps?:\/\/\S+/gi);
+  
+		if (foundLinks == null)
+			return;
+
+		// Removes duplicate links
+		let s = new Set(foundLinks);
+		let it = s.values();
+		const links = Array.from(it);
+
+		
+		// Generates a reference for each link
+		let replaceString = "";
+
+		for (var i = 0; i < links.length; i++) {
+			const reference = await generateReference(links[i]);
+			replaceString += "\n" + reference + "\n";
+		}
+
+		//const reference = await generateReference(selection);
+		editor.replaceSelection(replaceString);
 	}
 }
