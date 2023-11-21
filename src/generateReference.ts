@@ -23,6 +23,7 @@ export const generateReference = async (url: string) => {
     //reference.published = "(" + __ + ").";
     
     // Authors
+    reference.firstName = getAuthors(doc);
 
     // Get the publication Date
     reference.published = getPublicationDate(doc);
@@ -36,6 +37,18 @@ export const generateReference = async (url: string) => {
     let referenceString = `${reference.lastName}${reference.firstName}${reference.published}${reference.title}[online] ${reference.siteName}Available at: ${reference.link}`;
 
     return referenceString;
+}
+
+function getAuthors(doc : Document) : string {
+    let metaTags = document.head.querySelector("meta[property=Author]");
+
+    if (metaTags) {
+        let content = metaTags.textContent;
+
+        console.log(content);
+    }
+
+    return "";
 }
 
 function getPublicationDate(doc : Document) : string { 
