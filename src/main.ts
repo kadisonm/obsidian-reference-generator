@@ -1,16 +1,20 @@
 import { Editor, Notice, MarkdownView, Plugin, Platform } from 'obsidian';
 import { generateReference } from './generate-reference';
 import { SettingsTab, ReferenceGeneratorSettings, DEFAULT_SETTINGS } from "./settings";
+import { getRobots } from './helpers';
 
 const logo = "book-marked";
 
 export default class ReferenceGeneratorPlugin extends Plugin {
 	settings: ReferenceGeneratorSettings;
+	lastGenerationTime: Date;
 
 	async onload() {
 		await this.loadSettings();
 
 		this.addSettingTab(new SettingsTab(this.app, this));
+
+		this.lastGenerationTime = new Date();
 
 		// Generator command
 		this.addCommand({
@@ -49,6 +53,17 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 	}
 
 	async replaceLinks(editor: Editor) {
+		const currentTime = new Date();
+		const timeElapsed = currentTime.valueOf() - this.lastGenerationTime.valueOf();
+
+		if (timeElapsed <= 2000) {
+			const timeLeft = (2000 - timeElapsed) / 1000;
+			new Notice("You are generating too fast. Please try again after: " + Math.round(timeLeft) + " seconds");
+			return;
+		}
+
+		this.lastGenerationTime = new Date();
+
 		// Finds links within selection
 		const selection = editor.getSelection();
 		
@@ -60,6 +75,8 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		}
 
 		this.notify("Generating (1/2)");
+
+		editor.replaceSelection("Generating...");
 			
 		// Removes duplicate links
 		const set = new Set(foundLinks);
@@ -70,11 +87,22 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		let replaceString = "";
 
 		for (let i = 0; i < links.length; i++) {
+			const robots = await getRobots(links[i]);
+
+			if (robots.status == 400) {
+				new Notice("The following site does not allow web scraping: " + links[i]);
+
+				editor.setLine(editor.getCursor("anchor").line, "");
+				editor.replaceSelection(selection);
+				return;
+			}
+				
 			const reference = await generateReference(links[i]);
 
 			replaceString += "\n" + reference + "\n";
 		}
 
+		editor.setLine(editor.getCursor("anchor").line, "");
 		this.notify("Done (2/2)");
 		editor.replaceSelection(replaceString);
 	}
