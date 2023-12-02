@@ -14,8 +14,6 @@ export function getPublicationDate(doc : Document) : string {
     return "(n.d.). ";
 }
 
-// Convert date string to year
-
 const getYearFromString = (date: string) : string => {
     const dateObject = new Date(date);
 
@@ -25,10 +23,7 @@ const getYearFromString = (date: string) : string => {
     return "";
 }
 
-// Methods of finding the publication date
-
-// Looks for Meta data containing "published" and converts
-export const method1 = (doc: Document) : string => {
+const method1 = (doc: Document) : string => {
     const meta = getMetaData(doc, "published");
 
     if (meta.length != 0)
@@ -37,9 +32,7 @@ export const method1 = (doc: Document) : string => {
     return "";
 }
 
-// Checks for Time tag converts with datetimeAttribute or textContent
-// Less effective as it can confuse any Time element for the publish date
-export const method2 = (doc: Document) : string => {
+const method2 = (doc: Document) : string => {
     const timeElement = doc.getElementsByTagName("Time")[0];
 
     if (timeElement) {
@@ -58,37 +51,3 @@ export const method2 = (doc: Document) : string => {
     
     return "";
 }
-
-// Check for class containing time
-
-// const method4 = (doc: Document) : string => {
-//     function checkClass(className : string) : string {
-//         let timeElement = doc.getElementsByClassName(className)[0];
-
-//         if (timeElement) {
-//             const date = timeElement.textContent;
-
-//             if (date) {
-//                 const year = date.match(/\b\d{4}\b/);;
-                
-//                 if (year) {
-//                     return year[0];
-//                 }
-//             } 
-//         }
-
-//         return ""
-//     }
-
-//     let classes = ["date-created", "created-time"];
-
-//     for (let i = 0; i < classes.length; i++) {
-//         let result = checkClass(classes[i]);
-
-//         if (result != "") {
-//             return result;
-//         }
-//     }
-
-//     return "";
-// }

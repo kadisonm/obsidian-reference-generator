@@ -14,8 +14,6 @@ export function getSiteName(doc : Document, url: string) : string {
     return "";
 }
 
-// Methods of finding the site name
-
 const method1 = (doc: Document, url: string) : string => {
     let meta = getMetaData(doc, "og:site_name");
     

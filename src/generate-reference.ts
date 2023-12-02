@@ -1,6 +1,6 @@
 import { requestUrl } from 'obsidian';
 import { getAuthors } from './scrapers/authors'; 
-import { getPublicationDate, method1 } from './scrapers/publication-date';
+import { getPublicationDate } from './scrapers/publication-date';
 import { getTitle } from './scrapers/title';
 import { getSiteName } from './scrapers/site-name';
     
