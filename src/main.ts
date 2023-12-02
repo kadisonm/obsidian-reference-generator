@@ -1,5 +1,5 @@
 import { Editor, Notice, MarkdownView, Plugin, Platform } from 'obsidian';
-import { generateReference } from './generateReference';
+import { generateReference } from './generate-reference';
 import { SettingsTab, ReferenceGeneratorSettings, DEFAULT_SETTINGS } from "./settings";
 
 const logo = "book-marked";
@@ -53,7 +53,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		const selection = editor.getSelection();
 		
 		const foundLinks = selection.match(/\bhttps?::\/\/\S+/gi) || selection.match(/\bhttps?:\/\/\S+/gi);
-  
+
 		if (foundLinks == null) {
 			new Notice("Not a link");
 			return;
@@ -62,21 +62,19 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		this.notify("Generating (1/2)");
 			
 		// Removes duplicate links
-		let s = new Set(foundLinks);
-		let it = s.values();
-		const links = Array.from(it);
-
+		const set = new Set(foundLinks);
+		const iteratable = set.values();
+		const links = Array.from(iteratable);
 		
 		// Generates a reference for each link
-		
 		let replaceString = "";
 
-		for (var i = 0; i < links.length; i++) {
+		for (let i = 0; i < links.length; i++) {
 			const reference = await generateReference(links[i]);
+
 			replaceString += "\n" + reference + "\n";
 		}
 
-		//const reference = await generateReference(selection);
 		this.notify("Done (2/2)");
 		editor.replaceSelection(replaceString);
 	}
