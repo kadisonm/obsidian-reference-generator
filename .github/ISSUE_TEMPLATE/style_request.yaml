@@ -10,7 +10,7 @@ body:
   - type: textarea
     id: other
     attributes:
-      label: Anything else to add?
+      label: Additional Comment
       placeholder: This can be left blank if it's self explanatory.
     validations:
       required: false
