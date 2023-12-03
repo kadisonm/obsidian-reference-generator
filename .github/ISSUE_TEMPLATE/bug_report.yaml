@@ -20,7 +20,7 @@ body:
       label: What were you expecting??
       description: Describe what should have happened.
     validations:
-      required: true
+      required: false
   - type: dropdown
     id: operating-system
     attributes:
