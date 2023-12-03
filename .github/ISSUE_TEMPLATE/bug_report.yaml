@@ -11,8 +11,14 @@ body:
     id: what-happened
     attributes:
       label: What happened?
-      description: What were you expecting?
-      placeholder: Describe what you see.
+      description: Describe the bug and if the steps to reproduce (if applicable).
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What were you expecting??
+      description: Describe what should have happened.
     validations:
       required: true
   - type: dropdown
