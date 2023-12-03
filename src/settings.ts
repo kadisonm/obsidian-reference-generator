@@ -33,7 +33,7 @@ export class SettingsTab extends PluginSettingTab {
         // Select Default Style
         new Setting(containerEl)
         .setName("Select default citation style")
-        .setDesc("Changes the default citation styling when generating references. Please note that Harvard (Australia)'s link is between 2 zero width spaces as to not confused < and > for HTML.")
+        .setDesc("Changes the default citation styling when generating references. Please note that Harvard (Australia)'s link is between 2 zero width spaces as to not confuse < and > for HTML.")
         .addDropdown((dropdown) => {
           dropdown.addOption("Harvard", "Harvard");
           dropdown.addOption("Harvard (Australia)", "Harvard (Australia)");
@@ -63,7 +63,7 @@ export class SettingsTab extends PluginSettingTab {
         if (!Platform.isMobileApp) {
             new Setting(containerEl)
                 .setName('Enable desktop notifications')
-                .setDesc('Enable notifications on desktop. (does not include errors)')
+                .setDesc('Enable generation status notifications on desktop. (does not include errors)')
                 .addToggle((toggle) => {
                     toggle
                     .setValue(this.plugin.settings.enableDesktopNotifications)
