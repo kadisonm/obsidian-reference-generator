@@ -1,4 +1,4 @@
-import { accessSync } from "fs";
+const CSL = require('citeproc');
 
 export type ReferenceStyle = "Harvard" | "Harvard (Australia)";
 
@@ -14,6 +14,8 @@ export class Citation {
     siteName: string;
     link: string;
     accessed: Date;
+
+    citationData: {};
 
     constructor(authors? : Array<Author>, published? : Date, title? : string, siteName? : string, link? : string, accessed? : Date) {
         if (authors !== undefined) {
@@ -42,129 +44,31 @@ export class Citation {
     }
 
     getCitationInStyle(style: ReferenceStyle): string {
-        // Last, F. (2000). Title. [online] Site name. Available at: https://www.example.com [Accessed 1 Jan. 2000].
-        if (style == "Harvard") {
-            // Format accessed
-            let accessed = "";
+        var citations = {};
 
-            if (this.accessed !== undefined) {
-                const date = this.accessed.toLocaleDateString('en-GB', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                });
-                
-                accessed = `[Accessed ${date}].`;
-            }
+        var itemIDs = [];
 
-            // Format authors
-            let authors = "";
+        // const engine = new CSL.Engine(
+        //     {
+        //       retrieveLocale: (id: string) => {
+        //         return langCache.get(id);
+        //       },
+        //       retrieveItem: (id: string) => {
+        //         return bibCache.get(id);
+        //       },
+        //     },
+        //     styleXML,
+        //     lang
+        // );
 
-            this.authors.forEach((author) => {
-                if (author.firstName !== "" && author.lastName === "") {
-                    authors += author.firstName + ". ";
-                    return;
-                }
-                        
-                if (author.lastName !== "") {
-                    authors += author.lastName + ", "
-                }
+            // var xhr = new XMLHttpRequest();
+            // xhr.open('GET', 'https://raw.githubusercontent.com/citation-style-language/styles/master/' + styleID + '.csl', false);
+            // xhr.send(null);
 
-                if (author.firstName !== "") {
-                    authors += author.firstName[0] + ". "
-                }
-            });
-
-            // No authors use site name
-            let siteName = this.siteName + ". ";
-
-            if (authors === "") {
-                authors = siteName;
-                siteName = ""
-            }
-
-            // Format published year
-            let year = "n.d.";
-
-            if (this.published !== undefined) {
-                year = this.published.getFullYear().toString();
-            }
-
-            // Format Title
-            const lastChar = this.title[this.title.length - 1];
-
-            const format = /[!?]+/;
-
-            let title = this.title;
-
-            if (format.test(lastChar) === false) {
-                title += "."
-            }
-
-            return `${authors}(${year}). ${title} [online] ${siteName}Available at: ${this.link} ${accessed}`
-        }
-
-        // Last, F 2000, Title, Site name, Publisher, viewed 1 January 2000, <https://www.example.com>.
-        else if (style == "Harvard (Australia)") {
-            // Format accessed
-            let accessed = "";
-
-            if (this.accessed !== undefined) {
-                accessed = "viewed " + this.accessed.toLocaleDateString('en-GB', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                }) + ", ";
-            }
-
-            // Format authors
-            let authors = "";
-
-            this.authors.forEach((author) => {
-                if (author.firstName !== "" && author.lastName === "") {
-                    authors += author.firstName + " & ";
-                    return;
-                }
-                        
-                if (author.lastName !== "") {
-                    authors += author.lastName + ", "
-                }
-
-                if (author.firstName !== "") {
-                    authors += author.firstName[0] + " & "
-                }
-            });
-
-            // Remove & from last author
-            authors = authors.slice(0, -2);
-
-            // Format published year
-            let year = "n.d.";
-
-            if (this.published !== undefined) {
-                year = this.published.getFullYear().toString();
-            }
-
-            // Format Title
-            const lastChar = this.title[this.title.length - 1];
-
-            const format = /[!?]+/;
-
-            let title = " " + this.title;
-
-            if (format.test(lastChar) === false) {
-                title += ","
-            }
-
-            // If no author then title first.
-            if (authors === "") {
-                authors = this.title + " ";
-                title = ""
-            }
-
-            return `${authors}${year},${title} ${this.siteName}, ${accessed}<​${this.link}​>`
-        }
+            // var styleAsText = xhr.responseText;
+          
 
         return "";
+}
     }
 }
