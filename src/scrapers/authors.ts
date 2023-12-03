@@ -1,15 +1,13 @@
-import { getSiteName } from "./site-name";
 import { getMetaData, isUrl } from "../helpers";
+import { Author } from "src/citation";
 
-export function getAuthors(doc: Document, url: string): string {
-    let siteName = getSiteName(doc, url);
-
+export function getAuthors(doc: Document): Array<Author> {
     let meta = getMetaData(doc, "author");
     
     if (meta.length == 0)
         meta = getMetaData(doc, "creator");
 
-    let authors = "";
+    let authors = new Array();
     
     for (let i = 0; i < meta.length; i++) {
         const value = meta[i];
@@ -20,20 +18,22 @@ export function getAuthors(doc: Document, url: string): string {
 
         const authorName = value.split(" ");
 
-        if (authorName.length == 1) {
-            authors += authorName[0] + ". ";
-            continue;
-        }
-            
-        if (authorName[1] !== "")
-            authors += authorName[1] + ", "
+        authors.push({
+            firstName: authorName[0],
+            lastName: authorName[1]
+        })
 
-        if (authorName[0] !== "")
-           authors += authorName[0] + ". "
+        // if (authorName.length == 1) {
+        //     authors += authorName[0] + ". ";
+        //     continue;
+        // }
+            
+        // if (authorName[1] !== "")
+        //     authors += authorName[1] + ", "
+
+        // if (authorName[0] !== "")
+        //    authors += authorName[0] + ". "
     }
 
-    if (authors !== "")
-        return authors;
-    else
-        return siteName;
+    return authors;
 }

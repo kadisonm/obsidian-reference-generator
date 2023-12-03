@@ -5,7 +5,6 @@ export function getTitle(doc: Document): string {
         title = doc.title;
         title = title.split('|')[0]
         title = title.trim();
-        title += ". "
     }
   
     return title;

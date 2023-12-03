@@ -2,6 +2,7 @@ import { Editor, Notice, MarkdownView, Plugin, Platform } from 'obsidian';
 import { generateReference } from './generate-reference';
 import { SettingsTab, ReferenceGeneratorSettings, DEFAULT_SETTINGS } from "./settings";
 import { getRobots } from './helpers';
+import { ReferenceStyle } from './citation';
 
 const logo = "book-marked";
 
@@ -16,28 +17,41 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 
 		this.lastGenerationTime = new Date();
 
-		// Generator command
+		// Default Style Command
 		this.addCommand({
-			id: 'generate-harvard-reference',
-			name: 'Generate Harvard Reference',
+			id: 'generate-reference-default',
+			name: 'Generate reference (default style)',
 			icon: logo,
 			
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				if (editor.getSelection().length > 0) {
-					this.replaceLinks(editor);
+					this.replaceLinks(editor, this.settings.defaultStyle);
+				}
+			},
+		});
+		
+		// Selectable Style Command
+		this.addCommand({
+			id: 'generate-reference-selected',
+			name: 'Generate reference (select style)',
+			icon: logo,
+			
+			editorCallback: async (editor: Editor, view: MarkdownView) => {
+				if (editor.getSelection().length > 0) {
+					//this.replaceLinks(editor);
 				}
 			},
 		});
 
-		// Context menu item
+		// Context Menu Item (In default style)
 		this.registerEvent(
 			this.app.workspace.on("editor-menu", (menu, editor, view) => {
 				if (editor.getSelection().length > 0) {
 					menu.addItem((item) => {
 						item
-						.setTitle("Generate Harvard Reference")
+						.setTitle("Generate reference (default style)")
 						.setIcon(logo)
-						.onClick(async () => this.replaceLinks(editor));
+						.onClick(async () => this.replaceLinks(editor, this.settings.defaultStyle));
 					});
 				}
 			})
@@ -52,7 +66,8 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-	async replaceLinks(editor: Editor) {
+	async replaceLinks(editor: Editor, style: ReferenceStyle) {
+		// Cool down
 		const currentTime = new Date();
 		const timeElapsed = currentTime.valueOf() - this.lastGenerationTime.valueOf();
 
@@ -100,7 +115,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 			// 	return;
 			// }
 				
-			const reference = await generateReference(links[i]);
+			const reference = await generateReference(links[i], style, this.settings.includeDateAccessed);
 
 			replaceString += "\n" + reference + "\n";
 		}
