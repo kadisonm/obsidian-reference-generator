@@ -8,9 +8,9 @@ body:
       value: |
         Thanks for taking the time to fill out this style request!
   - type: textarea
-    id: suggestion
+    id: other
     attributes:
-      label: What style do you suggest?
-      placeholder: Describe your suggestion!
+      label: Anything else to add?
+      placeholder: This can be left blank if it's self explanatory.
     validations:
-      required: true
+      required: false
