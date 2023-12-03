@@ -117,7 +117,13 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 				
 			const reference = await generateReference(links[i], style, this.settings.includeDateAccessed);
 
-			replaceString += "\n" + reference + "\n";
+			if (i !== 0 && reference !== "") {
+				replaceString += "\n";
+			}
+
+			if (reference !== "") {
+				replaceString += reference + "\n";
+			}	
 		}
 
 		editor.setLine(editor.getCursor("anchor").line, "");
