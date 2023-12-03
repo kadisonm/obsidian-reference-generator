@@ -16,7 +16,24 @@ export function getAuthors(doc: Document): Array<Author> {
         if (isUrl(value))
             continue;
 
-        const authorName = value.split(" ");
+        const checkMultiple = value.split(",");
+
+        if (checkMultiple.length > 0) {
+            checkMultiple.forEach((author) => {
+                const authorName = author.trim().split(" ");
+
+                console.log(checkMultiple);
+
+                authors.push({
+                    firstName: authorName[0],
+                    lastName: authorName[1]
+                })
+            });
+
+            continue;
+        }
+
+        const authorName = value.trim().split(" ");
 
         authors.push({
             firstName: authorName[0],
