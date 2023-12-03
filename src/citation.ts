@@ -101,7 +101,7 @@ export class Citation {
                 title += "."
             }
 
-            return `${authors}(${year}). ${title} [online] ${siteName} Available at: ${this.link} ${accessed}`
+            return `${authors}(${year}). ${title} [online] ${siteName}Available at: ${this.link} ${accessed}`
         }
 
         // Last, F 2000, Title, Site name, Publisher, viewed 1 January 2000, <https://www.example.com>.
