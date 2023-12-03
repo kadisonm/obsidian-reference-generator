@@ -7,7 +7,7 @@ export function getSiteName(doc: Document, url: string): string {
         const result = method(doc, url);
 
         if (result !== "") {
-          return result;
+            return result;
         }
     }
 

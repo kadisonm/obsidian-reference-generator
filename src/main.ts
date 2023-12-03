@@ -103,7 +103,6 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 
 		for (let i = 0; i < links.length; i++) {
 			
-
 			// Do I need this? vvv
 
 			//const robots = await getRobots(links[i]);
