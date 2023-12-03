@@ -6,7 +6,7 @@ export function getPublicationDate(doc : Document) : string {
     for (const method of methods) {
         const result = method(doc);
 
-        if (result != "") {
+        if (result !== "") {
           return "(" + result + "). ";
         }
     }

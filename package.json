@@ -1,7 +1,7 @@
 {
 	"name": "reference-generator",
 	"version": "1.0.0",
-	"description": "Quickly generates harvard references from links.",
+	"description": "Quickly generate citations from links with styles such as harvard.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",

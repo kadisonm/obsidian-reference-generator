@@ -3,7 +3,7 @@
 	"name": "Reference Generator",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Quickly generates harvard references from links.",
+	"description": "Quickly generate citations from links with styles such as harvard.",
 	"author": "Kadison McLellan",
 	"authorUrl": "https://github.com/KadisonM",
 	"fundingUrl": "https://www.buymeacoffee.com/kadisonm",

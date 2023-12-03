@@ -11,8 +11,6 @@ export function getMetaData(doc: Document, name: string) : Array<string> {
         if (meta[i].name.includes(name)) {
             const found = meta[i].content;
 
-            console.log(found);
-
             if (!data.includes(found)) {
                 data.push(found);
             }
@@ -21,8 +19,6 @@ export function getMetaData(doc: Document, name: string) : Array<string> {
         // Check if a metadata property is passed name
         if (meta[i].getAttribute("property")?.includes(name)) {
             const found = meta[i].content;
-
-            console.log(found);
 
             if (!data.includes(found)) {
                 data.push(found);

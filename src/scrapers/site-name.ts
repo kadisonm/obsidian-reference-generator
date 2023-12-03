@@ -6,7 +6,7 @@ export function getSiteName(doc : Document, url: string) : string {
     for (const method of methods) {
         const result = method(doc, url);
 
-        if (result != "") {
+        if (result !== "") {
           return result + ". ";
         }
     }
@@ -29,7 +29,7 @@ const method1 = (doc: Document, url: string) : string => {
 const method2 = (doc: Document, url: string) : string => {
     let domainName = new URL(url).hostname;
 
-    if (domainName != "") {
+    if (domainName !== "") {
         domainName = domainName.replace(/^www\./, '');
         domainName = domainName.replace(/\.[^.]+$/, '');
         domainName = domainName.charAt(0).toUpperCase() + domainName.slice(1);

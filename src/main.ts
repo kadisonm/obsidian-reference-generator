@@ -87,15 +87,18 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		let replaceString = "";
 
 		for (let i = 0; i < links.length; i++) {
-			const robots = await getRobots(links[i]);
+			
 
-			if (robots.status == 400) {
-				new Notice("The following site does not allow web scraping: " + links[i]);
+			// Do I need this? vvv
 
-				editor.setLine(editor.getCursor("anchor").line, "");
-				editor.replaceSelection(selection);
-				return;
-			}
+			//const robots = await getRobots(links[i]);
+			// if (robots.status == 400) { 
+			// 	new Notice("The following site does not allow web scraping: " + links[i]);
+
+			// 	editor.setLine(editor.getCursor("anchor").line, "");
+			// 	editor.replaceSelection(selection);
+			// 	return;
+			// }
 				
 			const reference = await generateReference(links[i]);
 
