@@ -122,7 +122,7 @@ export class Citation {
 
             this.authors.forEach((author) => {
                 if (author.firstName !== "" && author.lastName === "") {
-                    authors += author.firstName + " &";
+                    authors += author.firstName + " & ";
                     return;
                 }
                         
@@ -131,12 +131,12 @@ export class Citation {
                 }
 
                 if (author.firstName !== "") {
-                    authors += author.firstName[0] + " &"
+                    authors += author.firstName[0] + " & "
                 }
             });
 
             // Remove & from last author
-            authors = authors.slice(0, -1);
+            authors = authors.slice(0, -2);
 
             // Format published year
             let year = "n.d.";
@@ -150,7 +150,7 @@ export class Citation {
 
             const format = /[!?]+/;
 
-            let title = this.title;
+            let title = " " + this.title;
 
             if (format.test(lastChar) === false) {
                 title += ","
@@ -158,11 +158,11 @@ export class Citation {
 
             // If no author then title first.
             if (authors === "") {
-                authors = this.title;
+                authors = this.title + " ";
                 title = ""
             }
 
-            return `${authors} ${year}, ${title} ${this.siteName}, ${accessed}<​${this.link}​>`
+            return `${authors}${year},${title} ${this.siteName}, ${accessed}<​${this.link}​>`
         }
 
         return "";
