@@ -1,6 +1,6 @@
 import { requestUrl } from "obsidian";
 
-export function getMetaData(doc: Document, name: string) : Array<string> {
+export function getMetaData(doc: Document, name: string): Array<string> {
     const meta = doc.getElementsByTagName('meta');
     
     let data = new Array<string>();

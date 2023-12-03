@@ -1,4 +1,4 @@
-export function getTitle(doc : Document) : string {
+export function getTitle(doc: Document): string {
     let title = "";
 
     if (doc.title !== "") {

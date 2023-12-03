@@ -1,7 +1,7 @@
 import { getSiteName } from "./site-name";
 import { getMetaData, isUrl } from "../helpers";
 
-export function getAuthors(doc : Document, url : string) : string {
+export function getAuthors(doc: Document, url: string): string {
     let siteName = getSiteName(doc, url);
 
     let meta = getMetaData(doc, "author");

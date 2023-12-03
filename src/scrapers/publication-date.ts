@@ -1,6 +1,6 @@
 import { getMetaData } from "../helpers";
 
-export function getPublicationDate(doc : Document) : string { 
+export function getPublicationDate(doc: Document): string { 
     const methods = [method1, method2];
 
     for (const method of methods) {
@@ -14,7 +14,7 @@ export function getPublicationDate(doc : Document) : string {
     return "(n.d.). ";
 }
 
-const getYearFromString = (date: string) : string => {
+function getYearFromString(date: string): string {
     const dateObject = new Date(date);
 
     if (!isNaN(dateObject.getDate()))
@@ -23,7 +23,7 @@ const getYearFromString = (date: string) : string => {
     return "";
 }
 
-const method1 = (doc: Document) : string => {
+function method1(doc: Document): string {
     const meta = getMetaData(doc, "published");
 
     if (meta.length != 0)
@@ -32,7 +32,7 @@ const method1 = (doc: Document) : string => {
     return "";
 }
 
-const method2 = (doc: Document) : string => {
+function method2(doc: Document): string {
     const timeElement = doc.getElementsByTagName("Time")[0];
 
     if (timeElement) {

@@ -4,7 +4,7 @@ import { getPublicationDate } from './scrapers/publication-date';
 import { getTitle } from './scrapers/title';
 import { getSiteName } from './scrapers/site-name';
     
-export const generateReference = async (url: string) => {
+export async function generateReference(url: string) {
     const reponse = await requestUrl(url);
     const parser = new DOMParser();
     const doc = parser.parseFromString(reponse.text, "text/html");

@@ -1,6 +1,6 @@
 import { getMetaData, isUrl } from "../helpers";
 
-export function getSiteName(doc : Document, url: string) : string {
+export function getSiteName(doc: Document, url: string): string {
     const methods = [method1, method2];
 
     for (const method of methods) {
@@ -14,7 +14,7 @@ export function getSiteName(doc : Document, url: string) : string {
     return "";
 }
 
-const method1 = (doc: Document, url: string) : string => {
+function method1(doc: Document, url: string): string {
     let meta = getMetaData(doc, "og:site_name");
     
     if (meta.length == 0)
@@ -26,7 +26,7 @@ const method1 = (doc: Document, url: string) : string => {
     return meta[0]
 }
 
-const method2 = (doc: Document, url: string) : string => {
+function method2(doc: Document, url: string): string {
     let domainName = new URL(url).hostname;
 
     if (domainName !== "") {
