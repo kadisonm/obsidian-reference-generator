@@ -1,6 +1,6 @@
 import { Editor, Notice, MarkdownView, Plugin, Platform, requestUrl } from 'obsidian';
-import { generateReference } from './generate-reference';
 import { SettingsTab, ReferenceGeneratorSettings, DEFAULT_SETTINGS } from "./settings";
+import { generateReference } from './generate-reference';
 import { SuggestStyleModal } from './suggest-modal'; 
 import { getRobots } from './helpers';
 import { cslList } from "./csl/csl-list";
@@ -141,13 +141,14 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 				
 			const reference = await generateReference(links[i], style, this.settings.includeDateAccessed);
 
-			// if (i !== 0 && reference !== "") {
-			// 	replaceString += "\n";
-			// }
-
 			if (reference !== "") {
 				replaceString += reference;
-			}	
+
+				if (i !== links.length - 1) {
+					console.log(i);
+					replaceString += "\n";
+				}
+			}
 		}
 
 		editor.setLine(editor.getCursor("anchor").line, "");

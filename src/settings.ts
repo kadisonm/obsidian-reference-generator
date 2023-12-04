@@ -4,6 +4,7 @@ import ReferenceGeneratorPlugin from "./main";
 export interface ReferenceGeneratorSettings {
     defaultStyle: string,
     includeDateAccessed: boolean,
+    generateHTML: boolean,
 	enableDesktopNotifications: boolean,
     enableMobileNotifications: boolean,
 }
@@ -11,6 +12,7 @@ export interface ReferenceGeneratorSettings {
 export const DEFAULT_SETTINGS: ReferenceGeneratorSettings = {
     defaultStyle: "Harvard",
     includeDateAccessed: true,
+    generateHTML: false,
 	enableDesktopNotifications: true,
     enableMobileNotifications: true,
 }
@@ -30,7 +32,7 @@ export class SettingsTab extends PluginSettingTab {
 
         // Select Default Style
         new Setting(containerEl)
-        .setName("Select default citation style")
+        .setName("Default citation style")
         .setDesc("Changes the default citation styling when generating references.")
         .addDropdown((dropdown) => {
           dropdown.addOption("university-of-york-harvard", "Harvard");
@@ -50,12 +52,25 @@ export class SettingsTab extends PluginSettingTab {
         // Enable Show Accessed
         new Setting(containerEl)
             .setName('Include date accessed')
-            .setDesc('Toggle date accessed within your references (if applicable)')
+            .setDesc('Will include today\'s date as date accessed (if applicable)')
             .addToggle((toggle) => {
                 toggle
                 .setValue(this.plugin.settings.includeDateAccessed)
                 .onChange(async (val) => {
                     this.plugin.settings.includeDateAccessed = val;
+                    await this.plugin.saveSettings();
+                }); 
+            })
+        
+        // Enable HTML Citations
+        new Setting(containerEl)
+            .setName('HTML citations')
+            .setDesc('Citations will generate as HTML blocks as opposed to markdown.')
+            .addToggle((toggle) => {
+                toggle
+                .setValue(this.plugin.settings.generateHTML)
+                .onChange(async (val) => {
+                    this.plugin.settings.generateHTML = val;
                     await this.plugin.saveSettings();
                 }); 
             })
@@ -79,7 +94,7 @@ export class SettingsTab extends PluginSettingTab {
         if (Platform.isMobileApp) {
             new Setting(containerEl)
                 .setName('Enable mobile notifications')
-                .setDesc('Enable notifications on mobile. (does not include errors)')
+                .setDesc('Enable generation status notifications on mobile. (does not include errors)')
                 .addToggle((toggle) => {
                     toggle
                     .setValue(this.plugin.settings.enableMobileNotifications)

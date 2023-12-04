@@ -60,7 +60,6 @@ export async function generateReference(url: string, styleID: string, showAccess
     }
 
     // Create Citeproc Engine
-    
     const locale = await requestUrl('https://raw.githubusercontent.com/citation-style-language/locales/master/locales-en-US.xml'); // Allow changing in settings
 
     const sys = {
@@ -83,7 +82,9 @@ export async function generateReference(url: string, styleID: string, showAccess
     const result = engine.makeBibliography();
 
     if (result[1]) {
-        return result[1].join('\n'); 
+        const text = result[1].toString();
+
+        return text.trim(); 
     }
 
     return "";
