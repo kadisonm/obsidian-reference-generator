@@ -2,7 +2,6 @@ import { Editor, Notice, MarkdownView, Plugin, Platform } from 'obsidian';
 import { generateReference } from './generate-reference';
 import { SettingsTab, ReferenceGeneratorSettings, DEFAULT_SETTINGS } from "./settings";
 import { getRobots } from './helpers';
-import { ReferenceStyle } from './citation';
 
 const logo = "book-marked";
 
@@ -66,7 +65,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-	async replaceLinks(editor: Editor, style: ReferenceStyle) {
+	async replaceLinks(editor: Editor, style: string) {
 		// Cool down
 		const currentTime = new Date();
 		const timeElapsed = currentTime.valueOf() - this.lastGenerationTime.valueOf();

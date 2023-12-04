@@ -3,7 +3,7 @@ import { requestUrl } from "obsidian";
 export function getMetaData(doc: Document, name: string): Array<string> {
     const meta = doc.getElementsByTagName('meta');
     
-    let data = new Array<string>();
+    const data = new Array<string>();
     
     for (let i = 0; i < meta.length; i++) { 
        
@@ -40,7 +40,7 @@ export function isUrl(url : string) {
 }
 
 export async function getRobots(url : string) {
-    let domainName = new URL(url).hostname;
+    const domainName = new URL(url).hostname;
 
     return await requestUrl(`https://${domainName}/robots.txt`);
 }

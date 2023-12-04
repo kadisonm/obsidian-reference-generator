@@ -15,7 +15,7 @@ export function getSiteName(doc: Document, url: string): string {
 }
 
 function method1(doc: Document, url: string): string {
-    let meta = getMetaData(doc, "og:site_name");
+    const meta = getMetaData(doc, "og:site_name");
     
     if (meta.length == 0)
         return "";
