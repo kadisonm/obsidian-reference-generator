@@ -47,7 +47,6 @@ export class SettingsTab extends PluginSettingTab {
             });
         });
 
-
         // Enable Show Accessed
         new Setting(containerEl)
             .setName('Include date accessed')

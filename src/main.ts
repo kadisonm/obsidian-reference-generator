@@ -39,21 +39,13 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 			icon: selectLogo,
 			
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
-				new SuggestStyleModal(this.app, (result) => {
-					if (result !== undefined) {
-						const found = cslList.find((item) => item === result);
-
-						if (found) {
-							if (editor.getSelection().length > 0) {
-								this.replaceLinks(editor, found.id);
-							}
-						}
-					}
-				}).open();
+				if (editor.getSelection().length > 0) {
+					this.generateFromSuggestionModal(editor)
+				}
 			},
 		});
 
-		// Context Menu Item (In default style)
+		// Context Menu Items
 		this.registerEvent(
 			this.app.workspace.on("editor-menu", (menu, editor, view) => {
 				if (editor.getSelection().length > 0) {
@@ -61,25 +53,13 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 						item
 						.setTitle("Generate reference (default style)")
 						.setIcon(defaultLogo)
-						.onClick(async () => this.replaceLinks(editor, this.settings.defaultStyle));
+						.onClick(async () => this.replaceLinks(editor, this.settings.defaultStyle))
 					});
 					menu.addItem((item) => {
 						item
 						.setTitle("Generate reference (select style)")
 						.setIcon(selectLogo)
-						.onClick(async () => {
-							new SuggestStyleModal(this.app, (result) => {
-								if (result !== undefined) {
-									const found = cslList.find((item) => item === result);
-			
-									if (found) {
-										if (editor.getSelection().length > 0) {
-											this.replaceLinks(editor, found.id);
-										}
-									}
-								}
-							}).open();
-						})
+						.onClick(async () => this.generateFromSuggestionModal(editor))
 					})
 				}
 			})
@@ -92,6 +72,23 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+
+	generateFromSuggestionModal(editor: Editor) {
+		new SuggestStyleModal(this.app, (result) => {
+			if (result !== undefined) {
+				const found = cslList.find((value) => value === result);
+
+				if (found) {
+					console.log("Won't run");
+					if (editor.getSelection().length > 0) {
+						this.replaceLinks(editor, found.id);
+					}
+				} else {
+					new Notice("Error: Could not find selected style.")
+				}
+			}
+		}).open();
 	}
 
 	async replaceLinks(editor: Editor, style: string) {
