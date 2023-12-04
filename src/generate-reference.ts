@@ -4,26 +4,6 @@ import { getPublicationDate } from './scrapers/publication-date';
 import { getTitle } from './scrapers/title';
 import { getSiteName } from './scrapers/site-name';
 import CSL from 'citeproc';
-
-// export interface Author {
-//     given: string;
-//     family: string;
-// }
-
-// interface CSLObject {
-//     id: string;
-//     type: string;
-//     title: string;
-//     'container-title': string;
-//     URL: string;
-//     author: Author[];
-//     issued: {
-//         'date-parts': number[][];
-//     };
-//     accessed?: {
-//         'date-parts': number[][];
-//     };
-// }
     
 export async function generateReference(url: string, styleID: string, showAccessed: boolean) {
     const reponse = await requestUrl(url);
@@ -38,54 +18,42 @@ export async function generateReference(url: string, styleID: string, showAccess
     const accessed = new Date();
 
     // Create CSL JSON
-    const cslObject = {
-        id: "scrapedCitation",
-        type: "webpage",
-        title: title,
+    const JSON = [{
+        "id": "id",
+        "type": "webpage",
+        "title": title,
         'container-title': siteName,
-        URL: url,
-        author: authors,
-        issued:{
+        "URL": url,
+        "author": authors,
+        "issued": {
             'date-parts': [[ published.getFullYear(), published.getMonth(), published.getDate() ]]
         },
-    }
-
-    // if (showAccessed) {
-    //     cslObject.accessed = {'date-parts': [[ accessed.getFullYear(), accessed.getMonth(), accessed.getDate() ]]}
-    // }
+    }];
 
     // Create Citeproc Engine
     const sys = {
-        retrieveLocale: async (langId: string) => {
-            try {
-                const response = await requestUrl('https://raw.githubusercontent.com/citation-style-language/locales/master/locales-' + langId + '.xml');
-                const result = await response.text;
-                return result;
-            } catch (error) {
-                return false;
-            }
+        retrieveLocale: async (lang: string) => {
+            const response = await requestUrl('https://raw.githubusercontent.com/citation-style-language/locales/master/locales-' + lang + '.xml');
+            const result = response.text;
+
+            return result;
         },
 
         retrieveItem: (id: string) => {
-            return cslObject;
+            return JSON.find(item => item.id === id);
         },
     };
 
     const style = await requestUrl('https://raw.githubusercontent.com/citation-style-language/styles/master/' + styleID + '.csl').text;
 
-    const citeproc = new CSL.Engine(sys, style);
+    const engine = new CSL.Engine(sys, style);
 
     // Get reference in style
+    engine.updateItems(['id']);
 
-    citeproc.updateItems(["scrapedCitation"]);
+    const result = engine.makeBibliography();
 
-    console.log(citeproc.registry.mylist);
-
-    const result = citeproc.makeBibliography();
-
-    if (result[1]) {
-       return result[1].join('\n'); 
-    }
+    console.log(result);
 
     return "";
 }
