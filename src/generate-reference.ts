@@ -3,27 +3,27 @@ import { getAuthors } from './scrapers/authors';
 import { getPublicationDate } from './scrapers/publication-date';
 import { getTitle } from './scrapers/title';
 import { getSiteName } from './scrapers/site-name';
-import { CSL } from 'citeproc';
+import CSL from 'citeproc';
 
-export interface Author {
-    given: string;
-    family: string;
-}
+// export interface Author {
+//     given: string;
+//     family: string;
+// }
 
-interface CSLObject {
-    id: string;
-    type: string;
-    title: string;
-    'container-title': string;
-    URL: string;
-    author: Author[];
-    issued: {
-        'date-parts': number[][];
-    };
-    accessed?: {
-        'date-parts': number[][];
-    };
-}
+// interface CSLObject {
+//     id: string;
+//     type: string;
+//     title: string;
+//     'container-title': string;
+//     URL: string;
+//     author: Author[];
+//     issued: {
+//         'date-parts': number[][];
+//     };
+//     accessed?: {
+//         'date-parts': number[][];
+//     };
+// }
     
 export async function generateReference(url: string, styleID: string, showAccessed: boolean) {
     const reponse = await requestUrl(url);
@@ -38,7 +38,7 @@ export async function generateReference(url: string, styleID: string, showAccess
     const accessed = new Date();
 
     // Create CSL JSON
-    const cslObject: CSLObject = {
+    const cslObject = {
         id: "scrapedCitation",
         type: "webpage",
         title: title,
@@ -50,9 +50,9 @@ export async function generateReference(url: string, styleID: string, showAccess
         },
     }
 
-    if (showAccessed) {
-        cslObject.accessed = {'date-parts': [[ accessed.getFullYear(), accessed.getMonth(), accessed.getDate() ]]}
-    }
+    // if (showAccessed) {
+    //     cslObject.accessed = {'date-parts': [[ accessed.getFullYear(), accessed.getMonth(), accessed.getDate() ]]}
+    // }
 
     // Create Citeproc Engine
     const sys = {
@@ -71,14 +71,21 @@ export async function generateReference(url: string, styleID: string, showAccess
         },
     };
 
-    const style = requestUrl('https://raw.githubusercontent.com/citation-style-language/styles/master/' + styleID + '.csl');
+    const style = await requestUrl('https://raw.githubusercontent.com/citation-style-language/styles/master/' + styleID + '.csl').text;
 
     const citeproc = new CSL.Engine(sys, style);
 
-    
+    // Get reference in style
+
+    citeproc.updateItems(["scrapedCitation"]);
+
+    console.log(citeproc.registry.mylist);
+
+    const result = citeproc.makeBibliography();
+
+    if (result[1]) {
+       return result[1].join('\n'); 
+    }
 
     return "";
-
-    //const reference = new Citation(authors, published, title, siteName, link, accessed);
-    //return reference.getCitationInStyle(style);
 }
