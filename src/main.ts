@@ -1,9 +1,12 @@
-import { Editor, Notice, MarkdownView, Plugin, Platform } from 'obsidian';
+import { Editor, Notice, MarkdownView, Plugin, Platform, requestUrl } from 'obsidian';
 import { generateReference } from './generate-reference';
 import { SettingsTab, ReferenceGeneratorSettings, DEFAULT_SETTINGS } from "./settings";
+import { SuggestStyleModal } from './suggest-modal'; 
 import { getRobots } from './helpers';
+import { cslList } from "./csl/csl-list";
 
-const logo = "book-marked";
+const defaultLogo = "file-text";
+const selectLogo = "scan";
 
 export default class ReferenceGeneratorPlugin extends Plugin {
 	settings: ReferenceGeneratorSettings;
@@ -20,7 +23,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		this.addCommand({
 			id: 'generate-reference-default',
 			name: 'Generate reference (default style)',
-			icon: logo,
+			icon: defaultLogo,
 			
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				if (editor.getSelection().length > 0) {
@@ -33,12 +36,20 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		this.addCommand({
 			id: 'generate-reference-selected',
 			name: 'Generate reference (select style)',
-			icon: logo,
+			icon: selectLogo,
 			
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
-				if (editor.getSelection().length > 0) {
-					//this.replaceLinks(editor);
-				}
+				new SuggestStyleModal(this.app, (result) => {
+					if (result !== undefined) {
+						const found = cslList.find((item) => item === result);
+
+						if (found) {
+							if (editor.getSelection().length > 0) {
+								this.replaceLinks(editor, found.id);
+							}
+						}
+					}
+				}).open();
 			},
 		});
 
@@ -49,9 +60,27 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 					menu.addItem((item) => {
 						item
 						.setTitle("Generate reference (default style)")
-						.setIcon(logo)
+						.setIcon(defaultLogo)
 						.onClick(async () => this.replaceLinks(editor, this.settings.defaultStyle));
 					});
+					menu.addItem((item) => {
+						item
+						.setTitle("Generate reference (select style)")
+						.setIcon(selectLogo)
+						.onClick(async () => {
+							new SuggestStyleModal(this.app, (result) => {
+								if (result !== undefined) {
+									const found = cslList.find((item) => item === result);
+			
+									if (found) {
+										if (editor.getSelection().length > 0) {
+											this.replaceLinks(editor, found.id);
+										}
+									}
+								}
+							}).open();
+						})
+					})
 				}
 			})
 		);
@@ -115,12 +144,12 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 				
 			const reference = await generateReference(links[i], style, this.settings.includeDateAccessed);
 
-			if (i !== 0 && reference !== "") {
-				replaceString += "\n";
-			}
+			// if (i !== 0 && reference !== "") {
+			// 	replaceString += "\n";
+			// }
 
 			if (reference !== "") {
-				replaceString += reference + "\n";
+				replaceString += reference;
 			}	
 		}
 
