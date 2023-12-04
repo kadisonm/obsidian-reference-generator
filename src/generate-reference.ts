@@ -35,11 +35,10 @@ export async function generateReference(url: string, styleID: string, showAccess
     const published = getPublicationDate(doc);
     const title = getTitle(doc);
     const siteName = getSiteName(doc, url);
-    const link = url;
     const accessed = new Date();
 
     // Create CSL JSON
-    let cslObject: CSLObject = {
+    const cslObject: CSLObject = {
         id: "scrapedCitation",
         type: "webpage",
         title: title,
