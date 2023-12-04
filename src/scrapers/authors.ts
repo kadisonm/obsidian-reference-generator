@@ -1,5 +1,5 @@
 import { getMetaData, isUrl } from "../helpers";
-import { Author } from "src/citation";
+import { Author } from "src/generate-reference";
 
 export function getAuthors(doc: Document): Array<Author> {
     let meta = getMetaData(doc, "author");
@@ -7,7 +7,7 @@ export function getAuthors(doc: Document): Array<Author> {
     if (meta.length == 0)
         meta = getMetaData(doc, "creator");
 
-    let authors = new Array();
+    let authors = new Array<Author>();
     
     for (let i = 0; i < meta.length; i++) {
         const value = meta[i];
@@ -23,8 +23,8 @@ export function getAuthors(doc: Document): Array<Author> {
             const authorName = author.split(" ");
 
             authors.push({
-                firstName: authorName[0],
-                lastName: authorName[1]
+                "family": authorName[0],
+                "given": authorName[1]
             })
         });
     }

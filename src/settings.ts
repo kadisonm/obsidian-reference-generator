@@ -1,10 +1,8 @@
 import { App, PluginSettingTab, Setting, Platform } from "obsidian";
 import ReferenceGeneratorPlugin from "./main";
 
-import { ReferenceStyle } from './citation';
-
 export interface ReferenceGeneratorSettings {
-    defaultStyle: ReferenceStyle,
+    defaultStyle: string,
     includeDateAccessed: boolean,
 	enableDesktopNotifications: boolean,
     enableMobileNotifications: boolean,
@@ -35,11 +33,13 @@ export class SettingsTab extends PluginSettingTab {
         .setName("Select default citation style")
         .setDesc("Changes the default citation styling when generating references. Please note that Harvard (Australia)'s link is between 2 zero width spaces as to not confuse < and > for HTML.")
         .addDropdown((dropdown) => {
-          dropdown.addOption("Harvard", "Harvard");
-          dropdown.addOption("Harvard (Australia)", "Harvard (Australia)");
+          dropdown.addOption("university-of-york-harvard", "Harvard (University of York)");
+          dropdown.addOption("university-of-south-australia-2017-harvard", "Harvard (University of South Australia)");
+          dropdown.addOption("modern-language-association", "Modern Language Association 9th edition");
+          dropdown.addOption("apa", "American Psychological Association 7th edition");
           dropdown
             .setValue(this.plugin.settings.defaultStyle)
-            .onChange(async (val: ReferenceStyle) => {
+            .onChange(async (val: string) => {
                 this.plugin.settings.defaultStyle = val;
                 await this.plugin.saveSettings();
             });

@@ -1,3 +1,4 @@
+import { requestUrl } from 'obsidian';
 const CSL = require('citeproc');
 
 export type ReferenceStyle = "Harvard" | "Harvard (Australia)";
@@ -43,10 +44,14 @@ export class Citation {
         }  
     }
 
-    getCitationInStyle(style: ReferenceStyle): string {
+    getCitationInStyle(style: string): string {
         var citations = {};
 
-        var itemIDs = [];
+        // var itemIDs = [];
+
+        // const style = requestUrl('https://raw.githubusercontent.com/citation-style-language/styles/master/' + styleID + '.csl');
+
+        // const citeproc = new CSL.Engine(sys, style, lang, forceLang);
 
         // const engine = new CSL.Engine(
         //     {
@@ -69,6 +74,5 @@ export class Citation {
           
 
         return "";
-}
     }
 }
