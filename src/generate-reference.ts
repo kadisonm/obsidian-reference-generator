@@ -4,6 +4,26 @@ import { getPublicationDate } from './scrapers/publication-date';
 import { getTitle } from './scrapers/title';
 import { getSiteName } from './scrapers/site-name';
 import CSL from 'citeproc';
+
+export interface Author {
+    "family"?: string;
+    "given"?: string;
+};
+
+interface Citation {
+    "id": string;
+    "type": string;
+    "title": string;
+    'container-title': string;
+    "URL": string;
+    "author": Author[];
+    "issued"?: {
+        'date-parts': number[][];
+    };
+    "accessed"?: {
+        'date-parts': number[][];
+    };
+}
     
 export async function generateReference(url: string, styleID: string, showAccessed: boolean) {
     const reponse = await requestUrl(url);
@@ -18,25 +38,34 @@ export async function generateReference(url: string, styleID: string, showAccess
     const accessed = new Date();
 
     // Create CSL JSON
-    const JSON = [{
+    const JSON: Citation = {
         "id": "id",
         "type": "webpage",
         "title": title,
         'container-title': siteName,
         "URL": url,
         "author": authors,
-        "issued": {
-            'date-parts': [[ published.getFullYear(), published.getMonth(), published.getDate() ]]
-        },
-    }];
+    };
+
+    if (published !== undefined) {
+        JSON["issued"] = {
+            "date-parts": [[ published.getFullYear(), published.getMonth(), published.getDate() ]]
+        }
+    }
+
+    if (showAccessed) {
+        JSON["accessed"] = {
+            "date-parts": [[ accessed.getFullYear(), accessed.getMonth(), accessed.getDate() ]]
+        }
+    }
 
     // Create Citeproc Engine
-    const sys = {
-        retrieveLocale: async (lang: string) => {
-            const response = await requestUrl('https://raw.githubusercontent.com/citation-style-language/locales/master/locales-' + lang + '.xml');
-            const result = response.text;
+    
+    const locale = await requestUrl('https://raw.githubusercontent.com/citation-style-language/locales/master/locales-en-US.xml'); // Allow changing in settings
 
-            return result;
+    const sys = {
+        retrieveLocale: (lang: string) => {
+            return locale.text;
         },
 
         retrieveItem: (id: string) => {
@@ -53,7 +82,9 @@ export async function generateReference(url: string, styleID: string, showAccess
 
     const result = engine.makeBibliography();
 
-    console.log(result);
+    if (result[1]) {
+        return result[1].join('\n'); 
+    }
 
     return "";
 }

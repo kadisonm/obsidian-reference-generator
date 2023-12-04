@@ -1,12 +1,7 @@
 import { getMetaData, isUrl } from "../helpers";
-//import { Author } from "src/generate-reference";
+import { Author } from "src/generate-reference";
 
-interface Authors {
-    family: string;
-    given: string;
-};
-
-export function getAuthors(doc: Document): Array<Authors> {
+export function getAuthors(doc: Document): Author[] {
     let meta = getMetaData(doc, "author");
     
     if (meta.length == 0)
