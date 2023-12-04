@@ -40,7 +40,7 @@ export async function generateReference(url: string, styleID: string, showAccess
         },
 
         retrieveItem: (id: string) => {
-            return JSON.find(item => item.id === id);
+            return JSON;
         },
     };
 
