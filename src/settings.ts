@@ -31,12 +31,14 @@ export class SettingsTab extends PluginSettingTab {
         // Select Default Style
         new Setting(containerEl)
         .setName("Select default citation style")
-        .setDesc("Changes the default citation styling when generating references. Please note that Harvard (Australia)'s link is between 2 zero width spaces as to not confuse < and > for HTML.")
+        .setDesc("Changes the default citation styling when generating references.")
         .addDropdown((dropdown) => {
-          dropdown.addOption("university-of-york-harvard", "Harvard (University of York)");
-          dropdown.addOption("university-of-south-australia-2017-harvard", "Harvard (University of South Australia)");
-          dropdown.addOption("modern-language-association", "Modern Language Association 9th edition");
-          dropdown.addOption("apa", "American Psychological Association 7th edition");
+          dropdown.addOption("university-of-york-harvard", "Harvard");
+          dropdown.addOption("modern-language-association", "MLA");
+          dropdown.addOption("apa", "APA");
+          dropdown.addOption("chicago-note-bibliography", "Chicago");
+          dropdown.addOption("ieee-transactions-on-medical-imaging", "IEEE");
+          dropdown.addOption("university-of-york-harvard", "Other");
           dropdown
             .setValue(this.plugin.settings.defaultStyle)
             .onChange(async (val: string) => {
