@@ -22,10 +22,22 @@ export function getAuthors(doc: Document): Author[] {
             author = author.trim();
             const authorName = author.split(" ");
 
+            let given = "";
+            let family = "";
+
+            for (let i = 0; i < authorName.length; i++) {
+                if (authorName[i] === authorName[authorName.length - 1]) {
+                    family = authorName[i];
+                   
+                } else {
+                    given += authorName[i] + " ";
+                }
+            }
+
             authors.push({
-                family: authorName[0],
-                given: authorName[1]
-            })
+                family: family,
+                given: given
+            });
         });
     }
 
