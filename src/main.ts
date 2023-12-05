@@ -28,7 +28,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 			
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				if (editor.getSelection().length > 0) {
-					this.replaceLinks(editor, this.settings.defaultStyle);
+					this.replaceLinks(editor, this.settings.currentStyle);
 				}
 			},
 		});
@@ -54,7 +54,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 						item
 						.setTitle("Generate reference (default style)")
 						.setIcon(defaultLogo)
-						.onClick(async () => this.replaceLinks(editor, this.settings.defaultStyle))
+						.onClick(async () => this.replaceLinks(editor, this.settings.currentStyle))
 					});
 					menu.addItem((item) => {
 						item
@@ -85,7 +85,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 						this.replaceLinks(editor, found.id);
 					}
 				} else {
-					new Notice("Error: Could not find selected style.")
+					new Notice("Error: Could not find selected style.");
 				}
 			}
 		}).open();

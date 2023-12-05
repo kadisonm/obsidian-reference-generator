@@ -1,7 +1,10 @@
-import { App, PluginSettingTab, Setting, Platform } from "obsidian";
+import { App, PluginSettingTab, Setting, Platform, Notice } from "obsidian";
 import ReferenceGeneratorPlugin from "./main";
+import { SuggestStyleModal } from "./suggest-modal";
+import { cslList } from "./csl/csl-list";
 
 export interface ReferenceGeneratorSettings {
+    currentStyle: string,
     defaultStyle: string,
     includeDateAccessed: boolean,
     textFormat: string,
@@ -12,7 +15,8 @@ export interface ReferenceGeneratorSettings {
 }
 
 export const DEFAULT_SETTINGS: ReferenceGeneratorSettings = {
-    defaultStyle: "Harvard",
+    currentStyle: "university-of-york-harvard",
+    defaultStyle: "university-of-york-harvard",
     includeDateAccessed: true,
     textFormat: "markdown",
     sortByAlphabetical: true,
@@ -34,6 +38,15 @@ export class SettingsTab extends PluginSettingTab {
 
 		containerEl.empty();
 
+        const otherDiv = containerEl.createEl("div", { cls: "other-hide" });
+        const found = cslList.find((value) => value.id === this.plugin.settings.currentStyle);
+        
+        if (found) {
+            otherDiv.textContent = "Other: " + found.label;
+        }
+
+        otherDiv.toggleClass("other-hide", this.plugin.settings.defaultStyle !== "other");
+        
         // Select Default Style
         new Setting(containerEl)
         .setName("Default citation style")
@@ -44,13 +57,42 @@ export class SettingsTab extends PluginSettingTab {
           dropdown.addOption("apa", "APA");
           dropdown.addOption("chicago-note-bibliography", "Chicago");
           dropdown.addOption("ieee-transactions-on-medical-imaging", "IEEE");
-          dropdown.addOption("university-of-york-harvard", "Other");
+          dropdown.addOption("other", "Other");
           dropdown
             .setValue(this.plugin.settings.defaultStyle)
-            .onChange(async (val: string) => {
-                this.plugin.settings.defaultStyle = val;
-                await this.plugin.saveSettings();
-            });
+            .onChange(async (style) => {
+                this.plugin.settings.defaultStyle = style;
+                otherDiv.toggleClass("other-hide", this.plugin.settings.defaultStyle !== "other");
+
+                if (style === "other") {
+                    new SuggestStyleModal(this.app, async (result) => {
+                        if (result !== undefined) {
+                            const found = cslList.find((value) => value === result);
+            
+                            if (found) {
+                                this.plugin.settings.currentStyle = found.id;
+
+                                otherDiv.textContent = "Other: " + found.label;
+                                new Notice("Updated style!");
+
+                                await this.plugin.saveSettings();   
+                            } else {
+                                new Notice("Error: Could not find selected style.");
+                            }
+                        } else {
+                            this.plugin.settings.currentStyle = DEFAULT_SETTINGS.currentStyle;
+                            this.plugin.settings.defaultStyle = DEFAULT_SETTINGS.defaultStyle;
+
+                            await this.plugin.saveSettings();
+                        }
+                    }).open();    
+                } else {
+                    this.plugin.settings.currentStyle = style;
+                    this.plugin.settings.defaultStyle = style;
+                    
+                    await this.plugin.saveSettings();
+                }
+            })
         });
 
         // Enable Show Accessed
@@ -63,7 +105,7 @@ export class SettingsTab extends PluginSettingTab {
                 .onChange(async (val) => {
                     this.plugin.settings.includeDateAccessed = val;
                     await this.plugin.saveSettings();
-                }); 
+                })
             })
         
         // Select Generation Text Format
@@ -79,7 +121,7 @@ export class SettingsTab extends PluginSettingTab {
             .onChange(async (val: string) => {
                 this.plugin.settings.textFormat = val;
                 await this.plugin.saveSettings();
-            });
+            })
         });
 
         // Sort by alphabetical order
@@ -92,7 +134,7 @@ export class SettingsTab extends PluginSettingTab {
                 .onChange(async (val) => {
                     this.plugin.settings.sortByAlphabetical = val;
                     await this.plugin.saveSettings();
-                }); 
+                }) 
             })
 
         // Show generation text
@@ -105,7 +147,7 @@ export class SettingsTab extends PluginSettingTab {
                 .onChange(async (val) => {
                     this.plugin.settings.showGenerationText = val;
                     await this.plugin.saveSettings();
-                }); 
+                }) 
             })
         
 
@@ -120,7 +162,7 @@ export class SettingsTab extends PluginSettingTab {
                     .onChange(async (val) => {
                       this.plugin.settings.enableDesktopNotifications = val;
                       await this.plugin.saveSettings();
-                    }); 
+                    }) 
                 })
         }	
 
@@ -135,7 +177,7 @@ export class SettingsTab extends PluginSettingTab {
                     .onChange(async (val) => {
                       this.plugin.settings.enableMobileNotifications = val;
                       await this.plugin.saveSettings(); 
-                    }); 
+                    })
                 })
         }	
 	}
