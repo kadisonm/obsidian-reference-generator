@@ -1,9 +1,9 @@
-import { Editor, Notice, MarkdownView, Plugin, Platform, requestUrl } from 'obsidian';
+import { Editor, Notice, MarkdownView, Plugin, Platform } from 'obsidian';
 import { SettingsTab, ReferenceGeneratorSettings, DEFAULT_SETTINGS } from "./settings";
-import { generateReference } from './generate-reference';
 import { SuggestStyleModal } from './suggest-modal'; 
-import { getRobots } from './helpers';
+import { generateReference } from './generate-reference';
 import { cslList } from "./csl/csl-list";
+import TurndownService from 'turndown'
 
 const defaultLogo = "file-text";
 const selectLogo = "scan";
@@ -80,7 +80,6 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 				const found = cslList.find((value) => value === result);
 
 				if (found) {
-					console.log("Won't run");
 					if (editor.getSelection().length > 0) {
 						this.replaceLinks(editor, found.id);
 					}
@@ -92,6 +91,10 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 	}
 
 	async replaceLinks(editor: Editor, style: string) {
+		const selection = editor.getSelection();
+		const file = this.app.workspace.getActiveFile();
+		const mouseLine = editor.getCursor("from").line;
+
 		// Cool down
 		const currentTime = new Date();
 		const timeElapsed = currentTime.valueOf() - this.lastGenerationTime.valueOf();
@@ -105,8 +108,6 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		this.lastGenerationTime = new Date();
 
 		// Finds links within selection
-		const selection = editor.getSelection();
-		
 		const foundLinks = selection.match(/\bhttps?::\/\/\S+/gi) || selection.match(/\bhttps?:\/\/\S+/gi);
 
 		if (foundLinks == null) {
@@ -114,9 +115,14 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 			return;
 		}
 
+		// Begin Generating
 		this.notify("Generating (1/2)");
-
-		editor.replaceSelection("Generating...");
+		
+		if (this.settings.showGenerationText) {
+			editor.replaceSelection("Generating...");
+		} else {
+			editor.replaceSelection(" ");
+		}
 			
 		// Removes duplicate links
 		const set = new Set(foundLinks);
@@ -125,35 +131,40 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		
 		// Generates a reference for each link
 		let replaceString = "";
+		
+		const turndownService = new TurndownService()
 
 		for (let i = 0; i < links.length; i++) {
+			const link = links[i];
 			
-			// Do I need this? vvv
+			const reference = await generateReference(link, style, this.settings.includeDateAccessed);
 
-			//const robots = await getRobots(links[i]);
-			// if (robots.status == 400) { 
-			// 	new Notice("The following site does not allow web scraping: " + links[i]);
-
-			// 	editor.setLine(editor.getCursor("anchor").line, "");
-			// 	editor.replaceSelection(selection);
-			// 	return;
-			// }
-				
-			const reference = await generateReference(links[i], style, this.settings.includeDateAccessed);
-
-			if (reference !== "") {
-				replaceString += reference;
+			if (reference !== undefined) {
+				if (this.settings.textFormat === "html") {
+					replaceString += reference;
+				} else if (this.settings.textFormat === "plaintext") {
+					replaceString += reference.replace(/<[^>]+>/g, '');
+				} else {
+					replaceString += turndownService.turndown(reference);
+				}
 
 				if (i !== links.length - 1) {
-					console.log(i);
-					replaceString += "\n";
+					replaceString += "\n\n";
+				} 
+
+				if (this.settings.showGenerationText) {
+					editor.setLine(mouseLine, `Generating (${i}/${links.length})`);
 				}
+			} else {
+				editor.setLine(mouseLine, selection);
+				return;
 			}
 		}
 
-		editor.setLine(editor.getCursor("anchor").line, "");
+		// Finish
+		editor.setLine(mouseLine, replaceString);
+		
 		this.notify("Done (2/2)");
-		editor.replaceSelection(replaceString);
 	}
 
 	notify(message: string) {

@@ -1,4 +1,4 @@
-import { requestUrl } from 'obsidian';
+import { requestUrl, Notice } from 'obsidian';
 import { getAuthors } from './scrapers/authors'; 
 import { getPublicationDate } from './scrapers/publication-date';
 import { getTitle } from './scrapers/title';
@@ -26,9 +26,15 @@ interface Citation {
 }
     
 export async function generateReference(url: string, styleID: string, showAccessed: boolean) {
-    const reponse = await requestUrl(url);
+    const response = await getServer(url);
+
+    if (response === undefined) {
+        new Notice("Error: Could not connect to " + url);
+        return;
+    }
+
     const parser = new DOMParser();
-    const doc = parser.parseFromString(reponse.text, "text/html");
+    const doc = parser.parseFromString(response.text, "text/html");
 
     // Scrape
     const authors = getAuthors(doc);
@@ -87,5 +93,16 @@ export async function generateReference(url: string, styleID: string, showAccess
         return text.trim(); 
     }
 
-    return "";
+    return;
+}
+
+async function getServer(url: string) {
+    try {
+        const result = await requestUrl(url);
+
+        return result;
+    }
+    catch {
+        return;
+    }
 }

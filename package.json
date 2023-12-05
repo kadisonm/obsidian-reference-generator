@@ -22,6 +22,7 @@
 		"typescript": "4.7.4"
 	},
 	"dependencies": {
-		"citeproc": "^2.4.63"
+		"citeproc": "^2.4.63",
+		"turndown": "^7.1.2"
 	}
 }
