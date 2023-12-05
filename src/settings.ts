@@ -5,6 +5,7 @@ export interface ReferenceGeneratorSettings {
     defaultStyle: string,
     includeDateAccessed: boolean,
     textFormat: string,
+    sortByAlphabetical: boolean,
     showGenerationText: boolean,
 	enableDesktopNotifications: boolean,
     enableMobileNotifications: boolean,
@@ -14,6 +15,7 @@ export const DEFAULT_SETTINGS: ReferenceGeneratorSettings = {
     defaultStyle: "Harvard",
     includeDateAccessed: true,
     textFormat: "markdown",
+    sortByAlphabetical: true,
     showGenerationText: true,
 	enableDesktopNotifications: true,
     enableMobileNotifications: true,
@@ -80,9 +82,22 @@ export class SettingsTab extends PluginSettingTab {
             });
         });
 
+        // Sort by alphabetical order
+        new Setting(containerEl)
+            .setName('Sort by alphabetical order')
+            .setDesc('Sort by alphabetical order when multiple citations are generated at the same time. This only applies if text isn\'t between them (like a heading).')
+            .addToggle((toggle) => {
+                toggle
+                .setValue(this.plugin.settings.sortByAlphabetical)
+                .onChange(async (val) => {
+                    this.plugin.settings.sortByAlphabetical = val;
+                    await this.plugin.saveSettings();
+                }); 
+            })
+
         // Show generation text
         new Setting(containerEl)
-            .setName('Show Generation Text')
+            .setName('Show generation text')
             .setDesc('Show generation status with document.')
             .addToggle((toggle) => {
                 toggle

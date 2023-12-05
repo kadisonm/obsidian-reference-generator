@@ -4,6 +4,7 @@ import { SuggestStyleModal } from './suggest-modal';
 import { generateReference } from './generate-reference';
 import { cslList } from "./csl/csl-list";
 import TurndownService from 'turndown'
+import { link } from 'fs';
 
 const defaultLogo = "file-text";
 const selectLogo = "scan";
@@ -127,12 +128,10 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		// Removes duplicate links
 		const set = new Set(foundLinks);
 		const iteratable = set.values();
-		const links = Array.from(iteratable);
+		let links = Array.from(iteratable);
 		
 		// Generates a reference for each link
-		let replaceString = "";
-		
-		const turndownService = new TurndownService()
+		let references = new Array();
 
 		for (let i = 0; i < links.length; i++) {
 			const link = links[i];
@@ -140,17 +139,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 			const reference = await generateReference(link, style, this.settings.includeDateAccessed);
 
 			if (reference !== undefined) {
-				if (this.settings.textFormat === "html") {
-					replaceString += reference;
-				} else if (this.settings.textFormat === "plaintext") {
-					replaceString += reference.replace(/<[^>]+>/g, '');
-				} else {
-					replaceString += turndownService.turndown(reference);
-				}
-
-				if (i !== links.length - 1) {
-					replaceString += "\n\n";
-				} 
+				references.push(reference);
 
 				if (this.settings.showGenerationText) {
 					editor.setLine(mouseLine, `Generating (${i}/${links.length})`);
@@ -158,6 +147,40 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 			} else {
 				editor.setLine(mouseLine, selection);
 				return;
+			}
+		}
+
+		// Sorts by alphabetical order
+		if (this.settings.sortByAlphabetical) {
+			references.sort(function (a, b) {
+				const plaintextA = a.replace(/<[^>]+>/g, '');
+				const plaintextB = b.replace(/<[^>]+>/g, '');
+
+				return plaintextA.localeCompare(plaintextB)
+			});	
+		}
+
+		// Converts into string
+		let replaceString = "";
+		const turndownService = new TurndownService()
+
+		for (let i = 0; i < references.length; i++) {
+			const reference = references[i];
+
+			if (this.settings.textFormat === "html") {
+				replaceString += reference;
+			} else if (this.settings.textFormat === "plaintext") {
+				replaceString += reference.replace(/<[^>]+>/g, '');
+			} else {
+				replaceString += turndownService.turndown(reference);
+			}
+
+			if (i !== references.length - 1) {
+				replaceString += "\n\n";
+			}
+
+			if (this.settings.showGenerationText) {
+				editor.setLine(mouseLine, `Sorting... (${i}/${links.length})`);
 			}
 		}
 
