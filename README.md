@@ -15,15 +15,15 @@
 
 ## Network usage
 This plugins requires internet access for the following:
-- To gather data such as authors, title and more, a request must be made to the selected website.
-- To use citation styles and locales, a request for a CSL file and XML file must be made from the [Citation Style Language - Style Repository](https://github.com/citation-style-language/styles) and the [Citation Style Language - Locales Repository](https://github.com/citation-style-language/locales) on every generation.
+- To gather data such as authors, titles and more, a request must be made to the selected website.
+- To use citation styles and locales a request for a CSL file and XML file must to the [Citation Style Language - Style Repository](https://github.com/citation-style-language/styles) and the [Citation Style Language - Locales Repository](https://github.com/citation-style-language/locales) on every generation.
 
 ## How to use
 ### Default styling
-A default citation style can be selected for generation in the plugin settings. This allows you to generate references without having to select it each time.
+A default citation style can be selected in the plugin settings. This allows you to generate references without having to select it each time.
 
 ### Generating a reference
-Select a link and right click to open the context menu. This will display to generation options, allowing you to either select a style or use your default. Alternatively, a command can be used from the command bar.
+Select a link and right click to open the context menu. This will display to generation options, allowing you to either select a style or use your default. Alternatively, a command can be used from the command bar. Depending on your preferences, either one of these can be disabled via settings.
 
 ![image](https://github.com/kadisonm/obsidian-reference-generator/assets/134670047/bd0ba2d9-06bb-4197-ad0f-17c444866706)
 
