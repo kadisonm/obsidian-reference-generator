@@ -16,8 +16,7 @@
 ## Network usage
 This plugins requires internet access for the following:
 - To gather data such as authors, title and more, a request must be made to the selected website.
-- To use citation styles, a request for a CSL file must be made from the [Citation Style Language - Style Repository](https://github.com/citation-style-language/styles)https://github.com/citation-style-language/styles on every generation.
-- To support different locales, a request for an XML file must be made from the [Citation Style Language - Locales Repository](https://github.com/citation-style-language/locales)https://github.com/citation-style-language/locales
+- To use citation styles and locales, a request for a CSL file must be made from the [Citation Style Language - Style Repository](https://github.com/citation-style-language/styles) and the [Citation Style Language - Locales Repository](https://github.com/citation-style-language/locales) for an XML file on every generation.
 
 ## How to use
 ### Default styling
