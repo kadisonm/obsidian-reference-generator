@@ -13,5 +13,35 @@
 ## Installation
 - Download the [latest release](https://github.com/kadisonm/obsidian-reference-generator/releases) and manually add the `main.js`, `manifest.json`, `styles.css` assets to `your-vault\.obsidian\plugins\reference-generator`
 
-## Network use
-To gather data such as authors, title and more, the plugin must make a request to the selected website. 
+## Network usage
+This plugins requires internet access for the following:
+- To gather data such as authors, title and more, a request must be made to the selected website.
+- To use citation styles, a request for a CSL file must be made from the [Citation Style Language - Style Repository](https://github.com/citation-style-language/styles)https://github.com/citation-style-language/styles on every generation.
+- To support different locales, a request for an XML file must be made from the [Citation Style Language - Locales Repository](https://github.com/citation-style-language/locales)https://github.com/citation-style-language/locales
+
+## How to use
+### Default styling
+A default citation style can be selected for generation in the plugin settings. This allows you to generate references without having to select it each time.
+
+### Generating a reference
+Select a link and right click to open the context menu. This will display to generation options, allowing you to either select a style or use your default. Alternatively, a command can be used from the command bar.
+
+![image](https://github.com/kadisonm/obsidian-reference-generator/assets/134670047/bd0ba2d9-06bb-4197-ad0f-17c444866706)
+
+![image](https://github.com/kadisonm/obsidian-reference-generator/assets/134670047/f333117b-bc33-4a06-861a-c755c9f7702d)
+
+### Generating multiple references at a time
+Select multiple links, right click and follow the same steps for generating a reference. This will take more time depending on how many links you are generating.
+
+![image](https://github.com/kadisonm/obsidian-reference-generator/assets/134670047/6941ba65-ea57-4181-a83f-b03bd3169567)
+
+### Why am I receiving 'Error: Could not connect to site'
+This is because the requested site could not be reached. This can happen due to network connectivity issues, or the requested page not existing on the site (404 error).
+
+## Show your support
+
+If you want to support me you can do so here, but please know that this is not expected and this plugin is completely free.
+
+[<img src="https://github.com/kadisonm/obsidian-reference-generator/assets/134670047/826ead37-1265-42b1-b171-928d1e17035f" width="200">](https://www.buymeacoffee.com/kadisonm)
+
+Thank you so much for using my plugin.
