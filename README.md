@@ -5,6 +5,8 @@
 
 *The image above is for illustrative purposes and is not an accurate reflection of the plugin's appearance.*
 
+To track the development of this plugin, please visit its [project page](https://github.com/users/kadisonm/projects/2/).
+
 ## This plugin offers:
 - Generating references for multiple links in one selection
 - Over 2000 styles to choose from
