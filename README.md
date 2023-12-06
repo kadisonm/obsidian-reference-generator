@@ -5,7 +5,9 @@
 
 *The image above is for illustrative purposes and is not an accurate reflection of the plugin's appearance.*
 
-To track the development of this plugin, please visit its [project page](https://github.com/users/kadisonm/projects/2/).
+This plugin is **not** an official Obsidian plugin.
+
+To track the development, please visit its [project page](https://github.com/users/kadisonm/projects/2/).
 
 ## This plugin offers:
 - Generating references for multiple links in one selection
