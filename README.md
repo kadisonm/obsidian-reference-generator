@@ -39,6 +39,9 @@ Select multiple links, right click and follow the same steps for generating a re
 ### Why am I receiving 'Error: Could not connect to site'
 This is because the requested site could not be reached. This can happen due to network connectivity issues, or the requested page not existing on the site (404 error).
 
+## Contributors
+Thanks to @FeralFlora and @mariomui for helping steer this project in the right direction. Especially for coming up with the idea to use Citeproc-js and potentially Zotero trackers in the future.
+
 ## Show your support
 
 If you want to support me you can do so here, but please know that this is not expected and this plugin is completely free.
