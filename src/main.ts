@@ -50,18 +50,23 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		this.registerEvent(
 			this.app.workspace.on("editor-menu", (menu, editor, view) => {
 				if (editor.getSelection().length > 0) {
-					menu.addItem((item) => {
-						item
-						.setTitle("Generate reference (default style)")
-						.setIcon(defaultLogo)
-						.onClick(async () => this.replaceLinks(editor, this.settings.currentStyle))
-					});
-					menu.addItem((item) => {
-						item
-						.setTitle("Generate reference (select style)")
-						.setIcon(selectLogo)
-						.onClick(async () => this.generateFromSuggestionModal(editor))
-					})
+					if (this.settings.showDefaultContext) {
+						menu.addItem((item) => {
+							item
+							.setTitle("Generate reference (default style)")
+							.setIcon(defaultLogo)
+							.onClick(async () => this.replaceLinks(editor, this.settings.currentStyle))
+						});	
+					}
+					
+					if (this.settings.showSelectContext) {
+						menu.addItem((item) => {
+							item
+							.setTitle("Generate reference (select style)")
+							.setIcon(selectLogo)
+							.onClick(async () => this.generateFromSuggestionModal(editor))
+						})	
+					}	
 				}
 			})
 		);

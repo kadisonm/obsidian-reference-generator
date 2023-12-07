@@ -10,6 +10,8 @@ export interface ReferenceGeneratorSettings {
     textFormat: string,
     sortByAlphabetical: boolean,
     showGenerationText: boolean,
+    showDefaultContext: boolean,
+    showSelectContext: boolean,
 	enableDesktopNotifications: boolean,
     enableMobileNotifications: boolean,
 }
@@ -21,8 +23,10 @@ export const DEFAULT_SETTINGS: ReferenceGeneratorSettings = {
     textFormat: "markdown",
     sortByAlphabetical: true,
     showGenerationText: true,
-	enableDesktopNotifications: true,
-    enableMobileNotifications: true,
+    showDefaultContext: true,
+    showSelectContext: true,
+	enableDesktopNotifications: false,
+    enableMobileNotifications: false,
 }
 
 export class SettingsTab extends PluginSettingTab {
@@ -136,11 +140,43 @@ export class SettingsTab extends PluginSettingTab {
                     await this.plugin.saveSettings();
                 }) 
             })
+        
+        containerEl.createEl("h2", { text: "Advanced" });
+
+        // Enable Default Generation Context Menu
+        if (!Platform.isMobileApp) {
+            new Setting(containerEl)
+                .setName('Show default generation in context menu')
+                .setDesc('Show the option for \'Generate reference (default style)\' in the context menu (right click menu).')
+                .addToggle((toggle) => {
+                    toggle
+                    .setValue(this.plugin.settings.showDefaultContext)
+                    .onChange(async (val) => {
+                      this.plugin.settings.showDefaultContext = val;
+                      await this.plugin.saveSettings();
+                    }) 
+                })
+        }	
+
+        // Enable Select Generation Context Menu
+        if (!Platform.isMobileApp) {
+            new Setting(containerEl)
+                .setName('Show select generation in context menu')
+                .setDesc('Show the option for \'Generate reference (select style)\' in the context menu (right click menu).')
+                .addToggle((toggle) => {
+                    toggle
+                    .setValue(this.plugin.settings.showSelectContext)
+                    .onChange(async (val) => {
+                      this.plugin.settings.showSelectContext = val;
+                      await this.plugin.saveSettings();
+                    }) 
+                })
+        }	
 
         // Show generation text
         new Setting(containerEl)
             .setName('Show generation text')
-            .setDesc('Show generation status with document.')
+            .setDesc('Show generation status within the document.')
             .addToggle((toggle) => {
                 toggle
                 .setValue(this.plugin.settings.showGenerationText)
@@ -149,7 +185,6 @@ export class SettingsTab extends PluginSettingTab {
                     await this.plugin.saveSettings();
                 }) 
             })
-        
 
         // Enable Desktop Notifications
         if (!Platform.isMobileApp) {
