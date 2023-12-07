@@ -4,7 +4,7 @@ import { SuggestStyleModal } from './suggest-modal';
 import { generateReference } from './generate-reference';
 import { cslList } from "./csl/csl-list";
 import TurndownService from 'turndown'
-import { link } from 'fs';
+import { isUrl } from './helpers';
 
 const defaultLogo = "file-text";
 const selectLogo = "scan";
@@ -27,8 +27,9 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 			icon: defaultLogo,
 			
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
-				if (editor.getSelection().length > 0) {
-					this.replaceLinks(editor, this.settings.currentStyle);
+				const selection = editor.getSelection();
+				if (selection.length > 0) {
+					this.replaceLinks(editor, selection, true, this.settings.currentStyle);
 				}
 			},
 		});
@@ -40,8 +41,10 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 			icon: selectLogo,
 			
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
-				if (editor.getSelection().length > 0) {
-					this.generateFromSuggestionModal(editor)
+				const selection = editor.getSelection();
+
+				if (selection.length > 0) {
+					this.generateFromSuggestionModal(editor, selection, true)
 				}
 			},
 		});
@@ -49,13 +52,15 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		// Context Menu Items
 		this.registerEvent(
 			this.app.workspace.on("editor-menu", (menu, editor, view) => {
-				if (editor.getSelection().length > 0) {
+				const selection = editor.getSelection();
+
+				if (selection.length > 0) { // Link(s) selected
 					if (this.settings.showDefaultContext) {
 						menu.addItem((item) => {
 							item
 							.setTitle("Generate reference (default style)")
 							.setIcon(defaultLogo)
-							.onClick(async () => this.replaceLinks(editor, this.settings.currentStyle))
+							.onClick(async () => this.replaceLinks(editor, selection, true, this.settings.currentStyle))
 						});	
 					}
 					
@@ -64,8 +69,30 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 							item
 							.setTitle("Generate reference (select style)")
 							.setIcon(selectLogo)
-							.onClick(async () => this.generateFromSuggestionModal(editor))
+							.onClick(async () => this.generateFromSuggestionModal(editor, selection, true))
 						})	
+					}	
+				} else { // Link right clicked
+					const text = editor.getLine(editor.getCursor("from").line);
+
+					if (isUrl(text)) {
+						if (this.settings.showDefaultContext) {
+							menu.addItem((item) => {
+								item
+								.setTitle("Generate reference (default style)")
+								.setIcon(defaultLogo)
+								.onClick(async () => this.replaceLinks(editor, text, false, this.settings.currentStyle))
+							});	
+						}
+						
+						if (this.settings.showSelectContext) {
+							menu.addItem((item) => {
+								item
+								.setTitle("Generate reference (select style)")
+								.setIcon(selectLogo)
+								.onClick(async () => this.generateFromSuggestionModal(editor, text, false))
+							})	
+						}	
 					}	
 				}
 			})
@@ -80,14 +107,14 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-	generateFromSuggestionModal(editor: Editor) {
+	generateFromSuggestionModal(editor: Editor, text: string, selected: boolean) {
 		new SuggestStyleModal(this.app, (result) => {
 			if (result !== undefined) {
 				const found = cslList.find((value) => value === result);
 
 				if (found) {
-					if (editor.getSelection().length > 0) {
-						this.replaceLinks(editor, found.id);
+					if (text.length > 0) {
+						this.replaceLinks(editor, text, selected, found.id);
 					}
 				} else {
 					new Notice("Error: Could not find selected style.");
@@ -96,8 +123,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		}).open();
 	}
 
-	async replaceLinks(editor: Editor, style: string) {
-		const selection = editor.getSelection();
+	async replaceLinks(editor: Editor, text: string, selected: boolean, style: string) {
 		const file = this.app.workspace.getActiveFile();
 		const mouseLine = editor.getCursor("from").line;
 
@@ -114,7 +140,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		this.lastGenerationTime = new Date();
 
 		// Finds links within selection
-		const foundLinks = selection.match(/\bhttps?::\/\/\S+/gi) || selection.match(/\bhttps?:\/\/\S+/gi);
+		const foundLinks = text.match(/\bhttps?::\/\/\S+/gi) || text.match(/\bhttps?:\/\/\S+/gi);
 
 		if (foundLinks == null) {
 			new Notice("Not a link");
@@ -125,9 +151,17 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		this.notify("Generating (1/2)");
 		
 		if (this.settings.showGenerationText) {
-			editor.replaceSelection("Generating...");
+			if (selected) {
+				editor.replaceSelection("Generating...");
+			} else {
+				editor.setLine(mouseLine, "Generating...");
+			}
 		} else {
-			editor.replaceSelection(" ");
+			if (selected) {
+				editor.replaceSelection(" ");
+			} else {
+				editor.setLine(mouseLine, " ");
+			}
 		}
 			
 		// Removes duplicate links
@@ -150,7 +184,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 					editor.setLine(mouseLine, `Generating (${i}/${links.length})`);
 				}
 			} else {
-				editor.setLine(mouseLine, selection);
+				editor.setLine(mouseLine, text);
 				return;
 			}
 		}
