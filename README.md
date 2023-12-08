@@ -27,7 +27,7 @@ This plugins requires internet access for the following:
 A default citation style can be selected in the plugin settings. This allows you to generate references without having to select it each time.
 
 ### Generating a reference
-Select a link and right click to open the context menu. This will display to generation options, allowing you to either select a style or use your default. Alternatively, a command can be used from the command bar. Depending on your preferences either one of these can be disabled via settings.
+Select a link and right click or simply right click on a link to open the context menu. This will display to generation options, allowing you to either select a style or use your default. Alternatively, a command can be used from the command bar. Depending on your preferences either one of these can be disabled via settings.
 
 ![Obsidian_ZG6ZxvJQhJ](https://github.com/kadisonm/obsidian-reference-generator/assets/134670047/dde9379f-4a4b-4d2d-9253-300fd5c83e17)
 
