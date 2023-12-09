@@ -1,6 +1,6 @@
 {
 	"name": "reference-generator",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"description": "Quickly generates citations from links in any style including Harvard, MLA, APA and more.",
 	"main": "main.js",
 	"scripts": {

@@ -1,8 +1,4 @@
-import { requestUrl, Notice } from 'obsidian';
-import { getAuthors } from './scrapers/authors'; 
-import { getPublicationDate } from './scrapers/publication-date';
-import { getTitle } from './scrapers/title';
-import { getSiteName } from './scrapers/site-name';
+import { requestUrl, Notice, RequestUrlParam } from 'obsidian';
 import CSL from 'citeproc';
 
 export interface Author {
@@ -10,63 +6,75 @@ export interface Author {
     "given"?: string;
 };
 
-interface Citation {
-    "id": string;
-    "type": string;
-    "title": string;
-    'container-title': string;
-    "URL": string;
-    "author": Author[];
-    "issued"?: {
-        'date-parts': number[][];
-    };
-    "accessed"?: {
-        'date-parts': number[][];
-    };
-}
-    
 export async function generateReference(url: string, styleID: string, showAccessed: boolean) {
-    const response = await getServer(url);
+    // Scrape
+    const escapedURL = encodeURIComponent(url);
+
+    const response = await requestSafely({
+        url: "https://en.wikipedia.org/api/rest_v1/data/citation/zotero/" + escapedURL,
+        headers: { 'Api-User-Agent': 'Reference-Generator/1.0 (https://github.com/kadisonm/obsidian-reference-generator; kadisonmcl@gmail.com)' }
+    })
 
     if (response === undefined) {
         new Notice("Error: Could not connect to " + url);
         return;
     }
 
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(response.text, "text/html");
-
-    // Scrape
-    const authors = getAuthors(doc);
-    const published = getPublicationDate(doc);
-    const title = getTitle(doc);
-    const siteName = getSiteName(doc, url);
-    const accessed = new Date();
+    const responseJson = JSON.parse(response.text)[0];
 
     // Create CSL JSON
-    const JSON: Citation = {
+    const cslSchema = {
         "id": "id",
         "type": "webpage",
-        "title": title,
-        'container-title': siteName,
+        "title": responseJson.title,
+        'container-title': responseJson.websiteName,
         "URL": url,
-        "author": authors,
-    };
-
-    if (published !== undefined) {
-        JSON["issued"] = {
-            "date-parts": [[ published.getFullYear(), published.getMonth(), published.getDate() ]]
+        "author": new Array(),
+        "issued": {
+        },
+        "accessed": {
         }
+    };
+    
+    for (let i = 0; i < responseJson.creators.length; i++) {
+        const creator = responseJson.creators[i];
+
+        const author : Author = {};
+
+        if (creator.firstName) {
+            author.given = creator.firstName;
+        }
+
+        if (creator.lastName) {
+            author.family = creator.lastName;
+        }
+
+        cslSchema.author.push(author);
+    }
+
+    if (responseJson.date) {
+        const date = new Date(responseJson.date);
+
+        cslSchema["issued"] = {
+            "date-parts": [[ date.getFullYear(), date.getMonth(), date.getDate() ]]
+        };
     }
 
     if (showAccessed) {
-        JSON["accessed"] = {
+        const accessed = new Date();
+
+        cslSchema["accessed"] = {
             "date-parts": [[ accessed.getFullYear(), accessed.getMonth(), accessed.getDate() ]]
-        }
+        };
     }
 
     // Create Citeproc Engine
-    const locale = await requestUrl('https://raw.githubusercontent.com/citation-style-language/locales/master/locales-en-US.xml'); // Allow changing in settings
+    const locale = await requestSafely('https://raw.githubusercontent.com/citation-style-language/locales/master/locales-en-US.xml'); // Allow changing in settings
+
+    if (locale === undefined) {
+        new Notice("Error: Could not get locale at " + url);
+        return;
+    }
 
     const sys = {
         retrieveLocale: (lang: string) => {
@@ -74,11 +82,18 @@ export async function generateReference(url: string, styleID: string, showAccess
         },
 
         retrieveItem: (id: string) => {
-            return JSON;
+            return cslSchema;
         },
     };
 
-    const style = await requestUrl('https://raw.githubusercontent.com/citation-style-language/styles/master/' + styleID + '.csl').text;
+    const styleResponse = await requestSafely('https://raw.githubusercontent.com/citation-style-language/styles/master/' + styleID + '.csl');
+
+    if (styleResponse === undefined) {
+        new Notice("Error: Could not get style at " + url);
+        return;
+    }
+
+    const style = styleResponse.text;
 
     const engine = new CSL.Engine(sys, style);
 
@@ -96,9 +111,9 @@ export async function generateReference(url: string, styleID: string, showAccess
     return;
 }
 
-async function getServer(url: string) {
+async function requestSafely(request: string | RequestUrlParam) {
     try {
-        const result = await requestUrl(url);
+        const result = await requestUrl(request);
 
         return result;
     }
