@@ -12,8 +12,7 @@ export interface ReferenceGeneratorSettings {
     showGenerationText: boolean,
     showDefaultContext: boolean,
     showSelectContext: boolean,
-	enableDesktopNotifications: boolean,
-    enableMobileNotifications: boolean,
+	enableGenerationNotifications: boolean,
 }
 
 export const DEFAULT_SETTINGS: ReferenceGeneratorSettings = {
@@ -25,8 +24,7 @@ export const DEFAULT_SETTINGS: ReferenceGeneratorSettings = {
     showGenerationText: true,
     showDefaultContext: true,
     showSelectContext: true,
-	enableDesktopNotifications: false,
-    enableMobileNotifications: false,
+	enableGenerationNotifications: false,
 }
 
 export class SettingsTab extends PluginSettingTab {
@@ -42,16 +40,20 @@ export class SettingsTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-        const otherDiv = containerEl.createEl("div", { cls: "other-hide" });
-        const found = cslList.find((value) => value.id === this.plugin.settings.currentStyle);
-        
-        if (found) {
-            otherDiv.textContent = "Other: " + found.label;
+        // Display 'other' style
+        const otherDiv = containerEl.createEl("div");
+
+        if (this.plugin.settings.defaultStyle !== "other") {
+            otherDiv.textContent = "";
+        } else {
+            const found = cslList.find((value) => value.id === this.plugin.settings.currentStyle);
+
+            if (found) {
+                otherDiv.textContent = "Other: " + found.label;
+            } 
         }
 
-        otherDiv.toggleClass("other-hide", this.plugin.settings.defaultStyle !== "other");
-        
-        // Select Default Style
+        // Select default style
         new Setting(containerEl)
         .setName("Default citation style")
         .setDesc("Changes the default citation styling when generating references.")
@@ -93,13 +95,15 @@ export class SettingsTab extends PluginSettingTab {
                 } else {
                     this.plugin.settings.currentStyle = style;
                     this.plugin.settings.defaultStyle = style;
+
+                    otherDiv.textContent = "";
                     
                     await this.plugin.saveSettings();
                 }
             })
         });
 
-        // Enable Show Accessed
+        // Enable show accessed
         new Setting(containerEl)
             .setName('Include date accessed')
             .setDesc('Will include today\'s date as date accessed (if applicable)')
@@ -112,7 +116,7 @@ export class SettingsTab extends PluginSettingTab {
                 })
             })
         
-        // Select Generation Text Format
+        // Select generation text format
         new Setting(containerEl)
         .setName("Generation text format")
         .setDesc("Changes the default generation text format. Please note that Markdown uses \\ to escape Markdown characters in the citation style.")
@@ -143,7 +147,7 @@ export class SettingsTab extends PluginSettingTab {
         
         containerEl.createEl("h2", { text: "Advanced" });
 
-        // Enable Default Generation Context Menu
+        // Enable default generation context menu
         if (!Platform.isMobileApp) {
             new Setting(containerEl)
                 .setName('Show default generation in context menu')
@@ -158,7 +162,7 @@ export class SettingsTab extends PluginSettingTab {
                 })
         }	
 
-        // Enable Select Generation Context Menu
+        // Enable select generation context menu
         if (!Platform.isMobileApp) {
             new Setting(containerEl)
                 .setName('Show select generation in context menu')
@@ -186,34 +190,17 @@ export class SettingsTab extends PluginSettingTab {
                 }) 
             })
 
-        // Enable Desktop Notifications
-        if (!Platform.isMobileApp) {
-            new Setting(containerEl)
-                .setName('Enable desktop notifications')
-                .setDesc('Enable generation status notifications on desktop. (does not include errors)')
-                .addToggle((toggle) => {
-                    toggle
-                    .setValue(this.plugin.settings.enableDesktopNotifications)
-                    .onChange(async (val) => {
-                      this.plugin.settings.enableDesktopNotifications = val;
-                      await this.plugin.saveSettings();
-                    }) 
-                })
-        }	
-
-        // Enable Mobile Notifications
-        if (Platform.isMobileApp) {
-            new Setting(containerEl)
-                .setName('Enable mobile notifications')
-                .setDesc('Enable generation status notifications on mobile. (does not include errors)')
-                .addToggle((toggle) => {
-                    toggle
-                    .setValue(this.plugin.settings.enableMobileNotifications)
-                    .onChange(async (val) => {
-                      this.plugin.settings.enableMobileNotifications = val;
-                      await this.plugin.saveSettings(); 
-                    })
-                })
-        }	
+        // Enable generation status notifications
+        new Setting(containerEl)
+            .setName('Enable generation notifications')
+            .setDesc('Enable generation status notifications. (does not include errors)')
+            .addToggle((toggle) => {
+                toggle
+                .setValue(this.plugin.settings.enableGenerationNotifications)
+                .onChange(async (val) => {
+                    this.plugin.settings.enableGenerationNotifications = val;
+                    await this.plugin.saveSettings();
+                }) 
+            })
 	}
 }

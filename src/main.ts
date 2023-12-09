@@ -230,10 +230,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 	}
 
 	notify(message: string) {
-		if (this.settings.enableDesktopNotifications && !Platform.isMobileApp) {
-			new Notice(message);
-		}
-		else if (this.settings.enableMobileNotifications && Platform.isMobileApp) {
+		if (this.settings.enableGenerationNotifications) {
 			new Notice(message);
 		}
 	}
