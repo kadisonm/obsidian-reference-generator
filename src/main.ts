@@ -178,6 +178,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 
 			if (citation === undefined) {
 				editor.setLine(mouseLine, text);
+				new Notice("Error: Could not get citation data.");
 
 				return;
 			}

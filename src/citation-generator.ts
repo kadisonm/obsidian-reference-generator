@@ -55,6 +55,7 @@ export default class CitationGenerator {
 	}
 
     async createEngine() {
+        console.log("Create engine");
         const locale = await requestSafely('https://raw.githubusercontent.com/citation-style-language/locales/master/locales-en-US.xml');
 
         if (locale === undefined) {
@@ -82,21 +83,20 @@ export default class CitationGenerator {
         const style = styleResponse.text;
 
         this.engine = new CSL.Engine(sys, style);
+
+        console.log("Finished engine");
     }
 
     async addCitation(url: string) {
-        const currentTime = new Date();
-        const timeDifference = currentTime.valueOf() - this.lastCalled.valueOf();
+        // Make sure API can only be called at 1rps
+        const timeDifference = new Date().valueOf() - this.lastCalled.valueOf();
+        const waitTime = timeDifference <= 1000 ? 1000 - timeDifference : 0;
 
-        console.log(timeDifference);
-        
-        const waitTime = Math.clamp(timeDifference, lower, upper)
         await delay(waitTime);
-        console.log("next");
 
         this.lastCalled = new Date();
 
-        return true;
+        // Get citation data from Citoid API
 
         const escapedURL = encodeURIComponent(url);
 
@@ -110,6 +110,8 @@ export default class CitationGenerator {
         }
 
         const responseJson = JSON.parse(response.text)[0];
+
+        // Create CSL format JSON data from response
 
         const citation: Citation = {
             "id": this.citations.length,
@@ -160,7 +162,7 @@ export default class CitationGenerator {
                 "date-parts": [[ accessed.getFullYear(), accessed.getMonth(), accessed.getDate() ]]
             };
         }
-        
+
         this.citations[citation.id] = citation;
         this.citationIDs.push(citation.id);
 
