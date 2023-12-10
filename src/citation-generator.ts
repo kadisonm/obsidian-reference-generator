@@ -1,7 +1,7 @@
 import { requestUrl, Notice, RequestUrlParam } from 'obsidian';
 import TurndownService from 'turndown'
 import CSL from 'citeproc';
-import { delay, clamp } from './helpers';
+import { delay } from './helpers';
 
 interface Citation {
     "id": number,
@@ -55,7 +55,6 @@ export default class CitationGenerator {
 	}
 
     async createEngine() {
-        console.log("Create engine");
         const locale = await requestSafely('https://raw.githubusercontent.com/citation-style-language/locales/master/locales-en-US.xml');
 
         if (locale === undefined) {
@@ -72,7 +71,6 @@ export default class CitationGenerator {
                 return this.citations[id];
             },
         };
-
         const styleResponse = await requestSafely('https://raw.githubusercontent.com/citation-style-language/styles/master/' + this.style + '.csl');
 
         if (styleResponse === undefined) {
@@ -83,8 +81,6 @@ export default class CitationGenerator {
         const style = styleResponse.text;
 
         this.engine = new CSL.Engine(sys, style);
-
-        console.log("Finished engine");
     }
 
     async addCitation(url: string) {

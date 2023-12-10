@@ -171,7 +171,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		// Add a citation for each link
 		const generator = new CitationGenerator(style, this.settings.includeDateAccessed);
 		await generator.createEngine();
-
+		
 		for (let i = 0; i < links.length; i++) {
 			const link = links[i];
 			const citation = await generator.addCitation(link);
@@ -185,7 +185,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 
 			if (this.settings.showGenerationText) {
 				editor.setLine(mouseLine, `Generating (${i}/${links.length})`);
-			}             
+			}        
 		}
 
 		// Get formatted citations

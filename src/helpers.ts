@@ -10,10 +10,6 @@ export function isUrl(url : string) {
     }
 }
 
-export function clamp(num: number, min: number, max:number) {
-    return Math.min(Math.max(num, min), max);
-}
-
 export async function delay(time: number) {
     return new Promise(resolve => setTimeout(resolve, time));
 }
