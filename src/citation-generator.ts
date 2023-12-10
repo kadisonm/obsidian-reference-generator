@@ -157,7 +157,25 @@ export default class CitationGenerator {
         }
 
         this.engine.updateItems(this.citationIDs); 
-        const bibliography = this.engine.makeBibliography();
+        const bibliography = this.engine.makeBibliography()[1];
+
+        if (sort === false && bibliography.length > 1) {
+            const unsortedBibliography = new Array();
+
+            for (let i = 0; i < this.citations.length; i++) {
+                for (let index = 0; index < bibliography.length; index++) {
+                    const citationData = this.citations[i];
+                    const bibCitation = bibliography[index];
+                    const foundURLs = bibCitation.includes(citationData.URL);
+
+                    if (foundURLs) {
+                        unsortedBibliography[i] = bibCitation;
+                    }
+                }
+            } 
+
+            return unsortedBibliography;
+        }
 
         return bibliography;
     }
@@ -165,8 +183,8 @@ export default class CitationGenerator {
     async getBibliographyInFormat(bibliography: any, format: string) {
         const newBibliography = new Array();
 
-        for (let i = 0; i < bibliography[1].length; i++) {
-            const citation = bibliography[1][i];
+        for (let i = 0; i < bibliography.length; i++) {
+            const citation = bibliography[i];
 
             if (format === "html") {
                 newBibliography.push(citation);

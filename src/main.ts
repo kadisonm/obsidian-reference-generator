@@ -4,7 +4,6 @@ import { SuggestStyleModal } from './suggest-modal';
 import CitationGenerator from './citation-generator';
 import { cslList } from "./csl/csl-list";
 import { isUrl } from './helpers';
-import { debug } from 'console';
 
 const defaultLogo = "file-text";
 const selectLogo = "scan";
