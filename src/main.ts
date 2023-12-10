@@ -1,10 +1,10 @@
 import { Editor, Notice, MarkdownView, Plugin, Platform } from 'obsidian';
 import { SettingsTab, ReferenceGeneratorSettings, DEFAULT_SETTINGS } from "./settings";
 import { SuggestStyleModal } from './suggest-modal'; 
-import { generateReference } from './generate-reference';
+import CitationGenerator from './citation-generator';
 import { cslList } from "./csl/csl-list";
-import TurndownService from 'turndown'
 import { isUrl } from './helpers';
+import { debug } from 'console';
 
 const defaultLogo = "file-text";
 const selectLogo = "scan";
@@ -169,58 +169,47 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		const iteratable = set.values();
 		let links = Array.from(iteratable);
 		
-		// Generates a reference for each link
-		let references = new Array();
+		// Add a citation for each link
+		const generator = new CitationGenerator(style, this.settings.includeDateAccessed);
+		await generator.createEngine();
 
 		for (let i = 0; i < links.length; i++) {
 			const link = links[i];
-			
-			const reference = await generateReference(link, style, this.settings.includeDateAccessed);
+			const citation = await generator.addCitation(link);
 
-			if (reference !== undefined) {
-				references.push(reference);
-
-				if (this.settings.showGenerationText) {
-					editor.setLine(mouseLine, `Generating (${i}/${links.length})`);
-				}
-			} else {
+			if (citation === undefined) {
 				editor.setLine(mouseLine, text);
+
 				return;
-			}
-		}
-
-		// Sorts by alphabetical order
-		if (this.settings.sortByAlphabetical) {
-			references.sort(function (a, b) {
-				const plaintextA = a.replace(/<[^>]+>/g, '');
-				const plaintextB = b.replace(/<[^>]+>/g, '');
-
-				return plaintextA.localeCompare(plaintextB)
-			});	
-		}
-
-		// Converts into string
-		let replaceString = "";
-		const turndownService = new TurndownService()
-
-		for (let i = 0; i < references.length; i++) {
-			const reference = references[i];
-
-			if (this.settings.textFormat === "html") {
-				replaceString += reference;
-			} else if (this.settings.textFormat === "plaintext") {
-				replaceString += reference.replace(/<[^>]+>/g, '');
-			} else {
-				replaceString += turndownService.turndown(reference);
-			}
-
-			if (i !== references.length - 1) {
-				replaceString += "\n\n";
 			}
 
 			if (this.settings.showGenerationText) {
-				editor.setLine(mouseLine, `Sorting... (${i}/${links.length})`);
+				editor.setLine(mouseLine, `Generating (${i}/${links.length})`);
 			}
+		}
+
+		// Get formatted citations
+
+		const bibliography = await generator.getBibliography(this.settings.sortByAlphabetical);
+
+		if (bibliography === undefined) {
+			editor.setLine(mouseLine, text);
+			new Notice("Error: Could not get bibliography.");
+			return;
+		}
+
+		const formattedBibliography = await generator.getBibliographyInFormat(bibliography, this.settings.textFormat);
+
+		if (formattedBibliography === undefined) {
+			editor.setLine(mouseLine, text);
+			new Notice("Error: Could not get formatted bibliography.");
+			return;
+		}
+
+		let replaceString = "";
+
+		for (let i = 0; i < formattedBibliography.length; i++) {
+			replaceString += formattedBibliography[i].trim() + "\n\n";
 		}
 
 		// Finish
