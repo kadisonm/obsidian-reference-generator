@@ -1,6 +1,7 @@
 import { requestUrl, Notice, RequestUrlParam } from 'obsidian';
 import TurndownService from 'turndown'
 import CSL from 'citeproc';
+import { delay, clamp } from './helpers';
 
 interface Citation {
     "id": number,
@@ -42,6 +43,7 @@ export default class CitationGenerator {
     style: string;
     locale: string;
     showAccessed: boolean;
+    lastCalled: Date;
 
     constructor(style: string, showAccessed: boolean) {
 		this.style = style;
@@ -49,6 +51,7 @@ export default class CitationGenerator {
 
         this.citations = new Array();
         this.citationIDs = new Array();
+        this.lastCalled = new Date();
 	}
 
     async createEngine() {
@@ -82,6 +85,19 @@ export default class CitationGenerator {
     }
 
     async addCitation(url: string) {
+        const currentTime = new Date();
+        const timeDifference = currentTime.valueOf() - this.lastCalled.valueOf();
+
+        console.log(timeDifference);
+        
+        const waitTime = Math.clamp(timeDifference, lower, upper)
+        await delay(waitTime);
+        console.log("next");
+
+        this.lastCalled = new Date();
+
+        return true;
+
         const escapedURL = encodeURIComponent(url);
 
         const response = await requestSafely({

@@ -184,11 +184,10 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 
 			if (this.settings.showGenerationText) {
 				editor.setLine(mouseLine, `Generating (${i}/${links.length})`);
-			}
+			}             
 		}
 
 		// Get formatted citations
-
 		const bibliography = await generator.getBibliography(this.settings.sortByAlphabetical);
 
 		if (bibliography === undefined) {
