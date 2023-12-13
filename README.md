@@ -2,7 +2,7 @@
 <sub>
 <img src="https://github.com/kadisonm/obsidian-reference-generator/assets/134670047/d8b5fa31-7ba8-47c1-b1ca-aeecf52f3568" width="45">
 </sub>
-Obsidian Reference Generator
+Reference Generator
 </h1>
 
 <h4 align="center">An <a href="https://obsidian.md/">Obsidian</a> plugin that quickly generates citations from links in any style including Harvard, MLA, APA and more.</h4>
