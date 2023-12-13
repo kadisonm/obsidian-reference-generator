@@ -1,5 +1,6 @@
 import { requestUrl, Notice, RequestUrlParam } from 'obsidian';
 import TurndownService from 'turndown'
+import markdownToTxt from 'markdown-to-txt';
 import CSL from 'citeproc';
 import { delay } from './helpers';
 
@@ -199,14 +200,16 @@ export default class CitationGenerator {
 
         for (let i = 0; i < bibliography.length; i++) {
             const citation = bibliography[i];
+            const turndownService = new TurndownService();
 
             if (format === "html") {
                 newBibliography.push(citation);
             } else if(format === "markdown") {
-                const turndownService = new TurndownService()
-                newBibliography.push(turndownService.turndown(citation));
+                const markdown = turndownService.turndown(citation);
+                newBibliography.push(markdown);
             } else if(format === "plaintext") {
-                newBibliography.push(citation.replace(/<[^>]+>/g, ''));
+                const markdown = turndownService.turndown(citation);
+                newBibliography.push(markdownToTxt(markdown));
             }
         }
 

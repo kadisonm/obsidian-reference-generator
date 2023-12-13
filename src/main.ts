@@ -122,6 +122,12 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		}).open();
 	}
 
+	notify(message: string) {
+		if (this.settings.enableGenerationNotifications) {
+			new Notice(message);
+		}
+	}
+
 	async replaceLinks(editor: Editor, text: string, selected: boolean, style: string) {
 		const file = this.app.workspace.getActiveFile();
 		const mouseLine = editor.getCursor("from").line;
@@ -130,8 +136,8 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		const currentTime = new Date();
 		const timeElapsed = currentTime.valueOf() - this.lastGenerationTime.valueOf();
 
-		if (timeElapsed <= 2000) {
-			const timeLeft = (2000 - timeElapsed) / 1000;
+		if (timeElapsed <= 1000) {
+			const timeLeft = (1000 - timeElapsed) / 1000;
 			new Notice("You are generating too fast. Please try again after: " + Math.round(timeLeft) + " seconds");
 			return;
 		}
@@ -215,11 +221,5 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		editor.setLine(mouseLine, replaceString);
 		
 		this.notify("Done (2/2)");
-	}
-
-	notify(message: string) {
-		if (this.settings.enableGenerationNotifications) {
-			new Notice(message);
-		}
 	}
 }

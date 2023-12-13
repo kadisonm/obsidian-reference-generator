@@ -25,6 +25,8 @@
 	},
 	"dependencies": {
 		"citeproc": "^2.4.63",
+		"lodash": "^4.17.21",
+		"markdown-to-txt": "^2.0.1",
 		"turndown": "^7.1.2"
 	}
 }
