@@ -19,28 +19,30 @@ To track the development, please visit its [project page](https://github.com/use
 
 ## Network usage
 This plugins requires internet access for the following:
-- To gather data such as authors, titles and more, a request must be made to the selected website.
+- To gather data such as authors, titles and more, a request must be made to the [Citoid API](https://www.mediawiki.org/wiki/Citoid/API).
 - To use citation styles and locales a request for a CSL file and XML file must be made to the [Citation Style Language - Style Repository](https://github.com/citation-style-language/styles) and the [Citation Style Language - Locales Repository](https://github.com/citation-style-language/locales) on every generation.
 
 ## How to use
 ### Default styling
-A default citation style can be selected in the plugin settings. This allows you to generate references without having to select it each time.
+A default citation style can be selected in the plugin settings. This allows you to generate references without having to select a style each time. It is recommended to enable 'Sort by alphabetical order' for styles such as IEEE and MLA.
 
 ### Generating a reference
-Select a link and right click or simply right click on a link to open the context menu. This will display to generation options, allowing you to either select a style or use your default. Alternatively, a command can be used from the command bar. Depending on your preferences either one of these can be disabled via settings.
+Right click on a link to open the context menu and display the generation options. You can either select a style or use your default (depending on your preferences either one of these can be disabled via settings). Alternatively, a command can be used for either.
 
 ![Obsidian_ZG6ZxvJQhJ](https://github.com/kadisonm/obsidian-reference-generator/assets/134670047/dde9379f-4a4b-4d2d-9253-300fd5c83e17)
 
 ### Generating multiple references at a time
-Select multiple links, right click and follow the same steps for generating a reference. This will take more time depending on how many links you are generating.
+Select multiple links, right click and follow the same steps for generating a reference. Each link roughly takes 1-3 seconds to generate but they can take longer. There are plans in the future to heavily reduce this time.
 
 ![image](https://github.com/kadisonm/obsidian-reference-generator/assets/134670047/6941ba65-ea57-4181-a83f-b03bd3169567)
+
+*Image: Example of selecting multiple links to generate*
 
 ### Why am I receiving 'Error: Could not connect to site'
 This is because the requested site could not be reached. This can happen due to network connectivity issues, or the requested page not existing on the site (404 error).
 
 ## Contributors
-Thanks to @FeralFlora and @mariomui for helping steer this project in the right direction. Especially for coming up with the idea to use Citeproc-js and potentially Zotero trackers in the future.
+Thanks to @FeralFlora and @mariomui for helping steer this project in the right direction. Especially for coming up with the idea to use Citeproc-js and Zotero trackers.
 
 ## Show your support
 
