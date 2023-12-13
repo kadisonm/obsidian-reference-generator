@@ -1,9 +1,13 @@
-<h1 align="center"> Obsidian Reference Generator </h1>
-<p align="center"> An <a href="https://obsidian.md/">Obsidian</a> plugin that quickly generates citations from links in any style including Harvard, MLA, APA and more.
+<h1 align="center">
+<sub>
+<img src="https://github.com/kadisonm/obsidian-reference-generator/assets/134670047/d8b5fa31-7ba8-47c1-b1ca-aeecf52f3568" width="45">
+</sub>
+Obsidian Reference Generator
+</h1>
 
-![Group 34](https://github.com/kadisonm/obsidian-reference-generator/assets/134670047/2d4d977e-f068-46d9-b0c5-0e7e89bb4310)
+<h4 align="center">An <a href="https://obsidian.md/">Obsidian</a> plugin that quickly generates citations from links in any style including Harvard, MLA, APA and more.</h4>
 
-*The image above is for illustrative purposes and is not an accurate reflection of the plugin's appearance.*
+---
 
 This plugin is **not** an official Obsidian plugin.
 
