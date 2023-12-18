@@ -24,7 +24,7 @@ interface Author {
     "family"?: string
 }
 
-async function requestSafely(request: string | RequestUrlParam, rawUrl?: string) {
+export async function requestSafely(request: string | RequestUrlParam, rawUrl?: string) {
     try {
         return await requestUrl(request);
     }
@@ -37,7 +37,27 @@ async function requestSafely(request: string | RequestUrlParam, rawUrl?: string)
     }
 }
 
-export default class CitationGenerator {
+export async function getLocale() {
+    const result = await requestSafely('https://raw.githubusercontent.com/citation-style-language/locales/master/locales-en-US.xml');
+
+    if (result === undefined) {
+        return;
+    }
+
+    return result.text;
+}
+
+export async function getStyle(style: string) {
+    const result = await requestSafely('https://raw.githubusercontent.com/citation-style-language/styles/master/' + style + '.csl');
+    
+    if (result === undefined) {
+        return;
+    }
+
+    return result.text;
+}
+
+export class CitationGenerator {
     citations: Array<Citation>;
     citationIDs: Array<Number>
     engine: any;
@@ -56,7 +76,7 @@ export default class CitationGenerator {
 	}
 
     async createEngine() {
-        const locale = await requestSafely('https://raw.githubusercontent.com/citation-style-language/locales/master/locales-en-US.xml');
+        const locale = await getLocale();
 
         if (locale === undefined) {
             new Notice("Error: Could not get locale.");
@@ -65,23 +85,22 @@ export default class CitationGenerator {
 
         const sys = {
             retrieveLocale: (lang: string) => {
-                return locale.text;
+                return locale;
             },
 
             retrieveItem: (id: number) => {
                 return this.citations[id];
             },
         };
-        const styleResponse = await requestSafely('https://raw.githubusercontent.com/citation-style-language/styles/master/' + this.style + '.csl');
+
+        const styleResponse = await getStyle(this.style);
 
         if (styleResponse === undefined) {
             new Notice("Error: Could not get style " + this.style);
             return;
         }
 
-        const style = styleResponse.text;
-
-        this.engine = new CSL.Engine(sys, style);
+        this.engine = new CSL.Engine(sys, styleResponse);
     }
 
     async addCitation(url: string) {

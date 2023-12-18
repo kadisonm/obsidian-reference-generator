@@ -1,7 +1,7 @@
 import { Editor, Notice, MarkdownView, Plugin, Platform } from 'obsidian';
 import { SettingsTab, ReferenceGeneratorSettings, DEFAULT_SETTINGS } from "./settings";
 import { SuggestStyleModal } from './suggest-modal'; 
-import CitationGenerator from './citation-generator';
+import { CitationGenerator } from './citation-generator';
 import { cslList } from "./csl/csl-list";
 import { isUrl } from './helpers';
 

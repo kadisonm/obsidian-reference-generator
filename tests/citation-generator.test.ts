@@ -1,10 +1,22 @@
-import CitationGenerator from '../src/citation-generator';
+import CSL from 'citeproc';
+import { requestSafely } from '../src/citation-generator';
 
-// Create engine
+import * as citationGeneratorModule from "../src/citation-generator"
+
+//jest.mock('CSL');
+jest.mock('../src/citation-generator', () => ({
+    getLocale: jest.fn(() => '01-01-2020'),
+}));
+
 describe("CitationGenerator", () => {
-    test("Create Engine", () => {
+    jest.spyOn(citationGeneratorModule, "getLocale").mockResolvedValue('');
+    jest.spyOn(citationGeneratorModule, "getStyle").mockResolvedValue('');
 
-        expect(true).toBe(true);
+    test("Create Engine", async () =>  {
+        const generator = new citationGeneratorModule.CitationGenerator('apa', true);
+		await generator.createEngine();
+ 
+        expect(generator.engine).not.toBe(undefined);
     });
 });
 
