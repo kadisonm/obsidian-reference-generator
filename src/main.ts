@@ -212,8 +212,14 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 
 		let replaceString = "";
 
-		for (let i = 0; i < formattedBibliography.length; i++) {
-			replaceString += formattedBibliography[i].trim() + "\n\n";
+		const formattedLength = formattedBibliography.length;
+
+		for (let i = 0; i < formattedLength; i++) {
+			replaceString += formattedBibliography[i].trim();
+
+			if (formattedLength !== 1 && i !== formattedLength - 1) {
+				replaceString += "\n\n";
+			}
 		}
 
 		// Finish
