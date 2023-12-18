@@ -2,6 +2,7 @@ import { promises as fs } from "fs";
 import { CitationGenerator } from "../src/citation-generator"
 import { getLocale, getStyle, requestSafely } from "../src/helpers";
 import testCitations from "./test-data/unsorted-citations";
+import { unformattedBibliography, markdown, html, plaintext } from "./test-data/format-citation";
 
 jest.mock('../src/helpers', () => ({
     requestSafely: jest.fn(),
@@ -56,6 +57,33 @@ describe("getBibliography", () => {
 
             // If the bibliography was sorted it should match the passed in sorted setting
             expect(foundInFirst).toBe(sort); 
+        });
+    });
+});
+
+describe("getBibliographyInFormat", () => {
+    describe("Correct for each format", () => {
+        it.each(['markdown', 'html', 'plaintext'])("%s", async (format) =>  {
+            const locale = await fs.readFile('./tests/test-data/locales/en-US.xml', 'utf8');
+            const style = await fs.readFile('./tests/test-data/styles/apa.csl', 'utf8'); 
+    
+            (getLocale as jest.MockedFunction<typeof getLocale>).mockResolvedValueOnce(locale);
+            (getStyle as jest.MockedFunction<typeof getStyle>).mockResolvedValueOnce(style);
+
+            const generator = new CitationGenerator('apa', true);
+            const result = await generator.createEngine();
+
+            const formattedCitation = await generator.getBibliographyInFormat(unformattedBibliography, format);
+
+            let expectedCitation = html;
+
+            if (format == "markdown") {
+                expectedCitation = markdown;
+            } else if (format == "plaintext") {
+                expectedCitation = plaintext;
+            }
+
+            expect(formattedCitation[0]).toBe(expectedCitation);
         });
     });
 });

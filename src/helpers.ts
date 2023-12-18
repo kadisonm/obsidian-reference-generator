@@ -1,5 +1,25 @@
 import { requestUrl, Notice, RequestUrlParam } from "obsidian";
 
+export interface Citation {
+  "id": number,
+  "type": string,
+  "title"?: string,
+  "container-title"?: string,
+  "URL": string,
+  "author"?: Array<Author>,
+  "issued"?: {
+      "date-parts": [[number, number, number]],
+  },
+  "accessed"?: {
+      "date-parts": [[number, number, number]],
+  }
+};
+
+export interface Author {
+  "given"?: string, 
+  "family"?: string
+}
+
 export async function requestSafely(request: string | RequestUrlParam, rawUrl?: string) {
   try {
       return await requestUrl(request);

@@ -1,22 +1,4 @@
-interface Citation {
-    "id": number,
-    "type": string,
-    "title"?: string,
-    "container-title"?: string,
-    "URL": string,
-    "author"?: Array<Author>,
-    "issued"?: {
-        "date-parts": [[number, number, number]],
-    },
-    "accessed"?: {
-        "date-parts": [[number, number, number]],
-    }
-};
-
-interface Author {
-    "given"?: string, 
-    "family"?: string
-}
+import { Author, Citation } from "src/helpers";
 
 // B comes before A by default to test sorting
 

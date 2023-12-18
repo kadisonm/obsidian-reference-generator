@@ -1,27 +1,7 @@
-import { requestSafely, getLocale, getStyle, delay } from './helpers';
+import { requestSafely, getLocale, getStyle, delay, Author, Citation } from './helpers';
 import TurndownService from 'turndown'
 import markdownToTxt from 'markdown-to-txt';
 import CSL from 'citeproc';
-
-interface Citation {
-    "id": number,
-    "type": string,
-    "title"?: string,
-    "container-title"?: string,
-    "URL": string,
-    "author"?: Array<Author>,
-    "issued"?: {
-        "date-parts": [[number, number, number]],
-    },
-    "accessed"?: {
-        "date-parts": [[number, number, number]],
-    }
-};
-
-interface Author {
-    "given"?: string, 
-    "family"?: string
-}
 
 export class CitationGenerator {
     citations: Array<Citation>;
@@ -190,12 +170,12 @@ export class CitationGenerator {
             const turndownService = new TurndownService();
 
             if (format === "html") {
-                newBibliography.push(citation);
+                newBibliography.push(bibliography[i]);
             } else if(format === "markdown") {
-                const markdown = turndownService.turndown(citation);
+                const markdown = turndownService.turndown(bibliography[i]);
                 newBibliography.push(markdown);
             } else if(format === "plaintext") {
-                const markdown = turndownService.turndown(citation);
+                const markdown = turndownService.turndown(bibliography[i]);
                 newBibliography.push(markdownToTxt(markdown));
             }
         }
