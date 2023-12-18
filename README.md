@@ -13,7 +13,7 @@ This plugin is **not** an official Obsidian plugin.
 
 To track the development, please visit its [project page](https://github.com/users/kadisonm/projects/2/).
 
-## Generation Times
+## Generation speed
 Please note that in the current version (1.0.0) the plugin's generation time can be quite slow. This is due to relying on a third party API for citation data, which varies in speed for each link. The API also uses an outdated version of the [Zotero Translation Server](https://github.com/zotero/translation-server). Please take these into account and be prepared for slower generation speeds with a higher number of links.
 
 On the bright side, there is a fix for this. A different implementation of the translation server is hopefully planned and possible for 1.1.0, so please keep an eye out.
