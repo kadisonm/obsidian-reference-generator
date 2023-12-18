@@ -1,4 +1,4 @@
-import { requestSafely, delay } from './helpers';
+import { requestSafely, getLocale, getStyle, delay } from './helpers';
 import TurndownService from 'turndown'
 import markdownToTxt from 'markdown-to-txt';
 import CSL from 'citeproc';
@@ -21,26 +21,6 @@ interface Citation {
 interface Author {
     "given"?: string, 
     "family"?: string
-}
-
-export async function getLocale() {
-    const result = await requestSafely('https://raw.githubusercontent.com/citation-style-language/locales/master/locales-en-US.xml');
-
-    if (result === undefined) {
-        return;
-    }
-
-    return result.text;
-}
-
-export async function getStyle(style: string) {
-    const result = await requestSafely('https://raw.githubusercontent.com/citation-style-language/styles/master/' + style + '.csl');
-    
-    if (result === undefined) {
-        return;
-    }
-
-    return result.text;
 }
 
 export class CitationGenerator {
@@ -85,6 +65,8 @@ export class CitationGenerator {
         }
 
         this.engine = new CSL.Engine(sys, style);
+
+        return true;
     }
 
     async addCitation(url: string) {

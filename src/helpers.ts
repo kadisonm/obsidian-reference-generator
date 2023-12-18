@@ -13,6 +13,26 @@ export async function requestSafely(request: string | RequestUrlParam, rawUrl?: 
   }
 }
 
+export async function getLocale() {
+  const result = await requestSafely('https://raw.githubusercontent.com/citation-style-language/locales/master/locales-en-US.xml');
+
+  if (result === undefined) {
+      return;
+  }
+
+  return result.text;
+}
+
+export async function getStyle(style: string) {
+  const result = await requestSafely('https://raw.githubusercontent.com/citation-style-language/styles/master/' + style + '.csl');
+  
+  if (result === undefined) {
+      return;
+  }
+
+  return result.text;
+}
+
 export function isUrl(url : string) {
   try {
     new URL(url);

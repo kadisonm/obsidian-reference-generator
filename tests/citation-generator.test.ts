@@ -1,40 +1,35 @@
 import { promises as fs } from "fs";
-import * as citationGeneratorModule from "../src/citation-generator"
-import { requestSafely } from "../src/helpers";
+import { CitationGenerator } from "../src/citation-generator"
+import { getLocale, getStyle, requestSafely } from "../src/helpers";
+import citations from "./data/citations";
 
 jest.mock('../src/helpers', () => ({
     requestSafely: jest.fn(),
+    getLocale: jest.fn(),
+    getStyle: jest.fn()
 }));
 
-describe("CitationGenerator", () => {
-    describe("createEngine", () => {
-        test("With failed getLocale and getStyle", async () =>  {
-            jest.spyOn(citationGeneratorModule, "getLocale").mockResolvedValue(undefined);
-            jest.spyOn(citationGeneratorModule, "getStyle").mockResolvedValue(undefined);
-    
-            const generator = new citationGeneratorModule.CitationGenerator('apa', true);
-            await generator.createEngine();
-     
-            expect(generator.engine).toBe(undefined);
-        });
+const styleIds = [
+    'apa', 
+    'modern-language-association', 
+    'university-of-york-harvard', 
+    'chicago-note-bibliography', 
+    'ieee-transactions-on-medical-imaging'
+];
 
-        test("With successful getLocale and getStyle", async () =>  {
-            const locale = await fs.readFile('./tests/data/en-US.txt', 'utf8');
-            const style = await fs.readFile('./tests/data/apa.txt', 'utf8');
-
-            jest.spyOn(citationGeneratorModule, "getLocale").mockResolvedValue(locale);
-            jest.spyOn(citationGeneratorModule, "getStyle").mockResolvedValue(style);
+describe("createEngine", () => {
+    describe("Successful with default styles", () => {
+        it.each(styleIds)("%s", async (styleId) =>  {
+            const locale = await fs.readFile('./tests/data/locales/en-US.xml', 'utf8');
+            const style = await fs.readFile('./tests/data/styles/' + styleId + '.csl', 'utf8'); 
     
-            const generator = new citationGeneratorModule.CitationGenerator('apa', true);
-            await generator.createEngine();
-     
-            expect(generator.engine).not.toBeUndefined;
-        });
+            (getLocale as jest.MockedFunction<typeof getLocale>).mockResolvedValueOnce(locale);
+            (getStyle as jest.MockedFunction<typeof getStyle>).mockResolvedValueOnce(style);
+
+            const generator = new CitationGenerator('apa', true);
+            const result = await generator.createEngine();
+
+            expect(result).toBe(true);
+        });    
     });
 });
-
-// Add citation
-
-// Get bibliography
-
-// Get bibliography in format
