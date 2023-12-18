@@ -71,8 +71,6 @@ export class CitationGenerator {
             return;
         }
 
-        console.log(response);
-
         const responseJson = JSON.parse(response.text)[0];
 
         // Create CSL format JSON data from response
