@@ -1,22 +1,35 @@
-import CSL from 'citeproc';
-import { requestSafely } from '../src/citation-generator';
-
+import { promises as fs } from "fs";
 import * as citationGeneratorModule from "../src/citation-generator"
+import { requestSafely } from "../src/helpers";
 
-//jest.mock('CSL');
-jest.mock('../src/citation-generator', () => ({
-    getLocale: jest.fn(() => '01-01-2020'),
+jest.mock('../src/helpers', () => ({
+    requestSafely: jest.fn(),
 }));
 
 describe("CitationGenerator", () => {
-    jest.spyOn(citationGeneratorModule, "getLocale").mockResolvedValue('');
-    jest.spyOn(citationGeneratorModule, "getStyle").mockResolvedValue('');
+    describe("createEngine", () => {
+        test("With failed getLocale and getStyle", async () =>  {
+            jest.spyOn(citationGeneratorModule, "getLocale").mockResolvedValue(undefined);
+            jest.spyOn(citationGeneratorModule, "getStyle").mockResolvedValue(undefined);
+    
+            const generator = new citationGeneratorModule.CitationGenerator('apa', true);
+            await generator.createEngine();
+     
+            expect(generator.engine).toBe(undefined);
+        });
 
-    test("Create Engine", async () =>  {
-        const generator = new citationGeneratorModule.CitationGenerator('apa', true);
-		await generator.createEngine();
- 
-        expect(generator.engine).not.toBe(undefined);
+        test("With successful getLocale and getStyle", async () =>  {
+            const locale = await fs.readFile('./tests/data/en-US.txt', 'utf8');
+            const style = await fs.readFile('./tests/data/apa.txt', 'utf8');
+
+            jest.spyOn(citationGeneratorModule, "getLocale").mockResolvedValue(locale);
+            jest.spyOn(citationGeneratorModule, "getStyle").mockResolvedValue(style);
+    
+            const generator = new citationGeneratorModule.CitationGenerator('apa', true);
+            await generator.createEngine();
+     
+            expect(generator.engine).not.toBeUndefined;
+        });
     });
 });
 

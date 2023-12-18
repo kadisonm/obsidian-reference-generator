@@ -1,8 +1,7 @@
-import { requestUrl, Notice, RequestUrlParam } from 'obsidian';
+import { requestSafely, delay } from './helpers';
 import TurndownService from 'turndown'
 import markdownToTxt from 'markdown-to-txt';
 import CSL from 'citeproc';
-import { delay } from './helpers';
 
 interface Citation {
     "id": number,
@@ -22,19 +21,6 @@ interface Citation {
 interface Author {
     "given"?: string, 
     "family"?: string
-}
-
-export async function requestSafely(request: string | RequestUrlParam, rawUrl?: string) {
-    try {
-        return await requestUrl(request);
-    }
-    catch {
-        if (rawUrl) {
-            new Notice("Error: Could not connect to " + rawUrl);
-        }
-        
-        return;
-    }
 }
 
 export async function getLocale() {
@@ -79,7 +65,6 @@ export class CitationGenerator {
         const locale = await getLocale();
 
         if (locale === undefined) {
-            new Notice("Error: Could not get locale.");
             return;
         }
 
@@ -93,14 +78,13 @@ export class CitationGenerator {
             },
         };
 
-        const styleResponse = await getStyle(this.style);
+        const style = await getStyle(this.style);
 
-        if (styleResponse === undefined) {
-            new Notice("Error: Could not get style " + this.style);
+        if (style === undefined) {
             return;
         }
 
-        this.engine = new CSL.Engine(sys, styleResponse);
+        this.engine = new CSL.Engine(sys, style);
     }
 
     async addCitation(url: string) {
