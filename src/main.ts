@@ -145,11 +145,37 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		this.lastGenerationTime = new Date();
 
 		// Finds links within selection
-		const foundLinks = text.match(/\bhttps?::\/\/\S+/gi) || text.match(/\bhttps?:\/\/\S+/gi);
 
-		if (foundLinks == null) {
-			new Notice("Not a link");
-			return;
+		const selectionArray = new Array();
+
+		const lines = text.split('\n');
+
+		let currentArray = { url: isUrl(lines[0]), array: new Array() };
+
+		lines.forEach((line: string) => {
+			const lineIsUrl = isUrl(line);
+
+			if (currentArray.url === lineIsUrl) {
+				if (line == "" && currentArray.url === true) { 
+					return;
+				}
+
+				currentArray.array.push(line);
+			} else {
+				if (line == "" && currentArray.url === true) {
+					return;
+				}
+
+				if (currentArray.array.length > 0) {
+					selectionArray.push(currentArray);
+				}
+
+				currentArray = { url: lineIsUrl, array: [line] };
+			}
+		});
+
+		if (currentArray.array.length > 0) {
+			selectionArray.push(currentArray);
 		}
 
 		// Begin Generating
@@ -193,7 +219,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 			}        
 		}
 
-		// Get formatted citations
+		// Get sorted Bibliography
 		const bibliography = await generator.getBibliography(this.settings.sortByAlphabetical);
 
 		if (bibliography === undefined) {
@@ -202,6 +228,8 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 			return;
 		}
 
+		// Get Bibliography in text format
+
 		const formattedBibliography = await generator.getBibliographyInFormat(bibliography, this.settings.textFormat);
 
 		if (formattedBibliography === undefined) {
@@ -209,6 +237,8 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 			new Notice("Error: Could not get formatted bibliography.");
 			return;
 		}
+
+		// Create replace text
 
 		let replaceString = "";
 
