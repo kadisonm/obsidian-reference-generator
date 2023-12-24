@@ -1,7 +1,7 @@
 {
 	"name": "reference-generator",
 	"version": "1.0.0",
-	"description": "Quickly generates citations from links in any style including Harvard, MLA, APA and more.",
+	"description": "Turn links into bibliographies in styles like Harvard, MLA, APA, and more.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
