@@ -41,7 +41,7 @@ Right click on a link to open the context menu and display the generation option
 ![Obsidian_ZG6ZxvJQhJ](https://github.com/kadisonm/obsidian-reference-generator/assets/134670047/dde9379f-4a4b-4d2d-9253-300fd5c83e17)
 
 ### Generating multiple references at a time
-Select multiple links, right click and follow the same steps for generating a reference. Each link roughly takes 1-3 seconds to generate but they can take longer. There are plans in the future to heavily reduce this time.
+Select multiple links, right click and follow the same steps for generating a reference. Each link roughly takes 1-3 seconds to generate but they can take longer. There are plans in the future to heavily reduce this time. Text inbetween links is saved, but it will treat all links as a bibliography regardless of what text is inbetween. If you would like two seperately sorted bibliographies, it is best to generate these seperately.
 
 ![image](https://github.com/kadisonm/obsidian-reference-generator/assets/134670047/6941ba65-ea57-4181-a83f-b03bd3169567)
 
