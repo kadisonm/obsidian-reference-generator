@@ -3,7 +3,8 @@ import { SettingsTab, ReferenceGeneratorSettings, DEFAULT_SETTINGS } from "./set
 import { SuggestStyleModal } from './suggest-modal'; 
 import { CitationGenerator } from './citation-generator';
 import { cslList } from "./csl/csl-list";
-import { isUrl } from './helpers';
+import * as linkify from 'linkifyjs';
+import linkifyHtml from 'linkify-html';
 
 const defaultLogo = "file-text";
 const selectLogo = "scan";
@@ -74,7 +75,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 				} else { // Link right clicked
 					const text = editor.getLine(editor.getCursor("from").line);
 
-					if (isUrl(text)) {
+					if (linkify.test(text.trim())) {
 						if (this.settings.showDefaultContext) {
 							menu.addItem((item) => {
 								item
@@ -137,6 +138,14 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		const file = this.app.workspace.getActiveFile();
 		const mouseLine = editor.getCursor("from").line;
 
+		// Get links
+		const links = linkify.find(text);
+
+		if (links.length === 0) {
+			new Notice("Invalid link(s).");
+			return;
+		}
+
 		// Start generation
 		const initialText = this.settings.showGenerationText ? "Generating..." : " ";
 
@@ -150,14 +159,6 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 			new Notice("Generating (1/2)");
 		}
 
-		// Get links
-		const links = text.match(/\bhttps?::\/\/\S+/gi) || text.match(/\bhttps?:\/\/\S+/gi);
-
-		if (links === null) {
-			new Notice("Invalid link(s).");
-			return;
-		}
-
 		// Create citation engine
 		const generator = new CitationGenerator(style, this.settings.includeDateAccessed);
 		await generator.createEngine();
@@ -165,7 +166,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		// Add links to engine
 		for (let i = 0; i < links.length; i++) {
 			const link = links[i];
-			const citation = await generator.addCitation(link);
+			const citation = await generator.addCitation(link.href);
 
 			if (citation === undefined) {
 				editor.setLine(mouseLine, text);
@@ -199,11 +200,11 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 
 		let newSelection = text;
 
-		links.forEach((link: string, index: number) => {
-			newSelection = newSelection.replace(link, "!Bibliography" + index + "!")
+		links.forEach((link: any, index: number) => {
+			newSelection = newSelection.replace(link.value, "!Bibliography" + index + "!")
 		});
 
-		links.forEach((link: string, index: number) => {
+		links.forEach((link: any, index: number) => {
 			newSelection = newSelection.replace("!Bibliography" + index + "!", formattedBibliography[index]);
 		});
 
