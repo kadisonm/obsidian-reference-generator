@@ -28,7 +28,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				const selection = editor.getSelection();
 				if (selection.length > 0) {
-					this.replaceLinks(editor, selection, true, this.settings.currentStyle);
+					this.replaceLinks(editor, selection, this.settings.currentStyle, true);
 				}
 			},
 		});
@@ -59,7 +59,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 							item
 							.setTitle("Generate reference (default style)")
 							.setIcon(defaultLogo)
-							.onClick(async () => this.replaceLinks(editor, selection, true, this.settings.currentStyle))
+							.onClick(async () => this.replaceLinks(editor, selection, this.settings.currentStyle, true))
 						});	
 					}
 					
@@ -80,7 +80,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 								item
 								.setTitle("Generate reference (default style)")
 								.setIcon(defaultLogo)
-								.onClick(async () => this.replaceLinks(editor, text, false, this.settings.currentStyle))
+								.onClick(async () => this.replaceLinks(editor, text, this.settings.currentStyle, false))
 							});	
 						}
 						
@@ -113,7 +113,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 
 				if (found) {
 					if (text.length > 0) {
-						this.replaceLinks(editor, text, selected, found.id);
+						this.replaceLinks(editor, text, found.id, selected);
 					}
 				} else {
 					new Notice("Error: Could not find selected style.");
@@ -122,78 +122,62 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		}).open();
 	}
 
-	notify(message: string) {
-		if (this.settings.enableGenerationNotifications) {
-			new Notice(message);
-		}
-	}
+	async replaceLinks(editor: Editor, text: string, style: string, selected: boolean) {
+		// Cool down
+		const currentTime = new Date();
 
-	async replaceLinks(editor: Editor, text: string, selected: boolean, style: string) {
+        if (currentTime.valueOf() - this.lastGenerationTime.valueOf() <= 1000) {
+            new Notice("You are generating too fast. Please try again.");
+            return;
+        }
+
+        this.lastGenerationTime = new Date();
+
+		// Get file
 		const file = this.app.workspace.getActiveFile();
 		const mouseLine = editor.getCursor("from").line;
 
-		// Cool down
-		const currentTime = new Date();
-		const timeElapsed = currentTime.valueOf() - this.lastGenerationTime.valueOf();
+		// Start generation
+		const initialText = this.settings.showGenerationText ? "Generating..." : " ";
 
-		if (timeElapsed <= 1000) {
-			const timeLeft = (1000 - timeElapsed) / 1000;
-			new Notice("You are generating too fast. Please try again after: " + Math.round(timeLeft) + " seconds");
-			return;
-		}
-
-		this.lastGenerationTime = new Date();
-
-		// Finds links within selection
-		const foundLinks = text.match(/\bhttps?::\/\/\S+/gi) || text.match(/\bhttps?:\/\/\S+/gi);
-
-		if (foundLinks == null) {
-			new Notice("Not a link");
-			return;
-		}
-
-		// Begin Generating
-		this.notify("Generating (1/2)");
-		
-		if (this.settings.showGenerationText) {
-			if (selected) {
-				editor.replaceSelection("Generating...");
-			} else {
-				editor.setLine(mouseLine, "Generating...");
-			}
+		if (selected) {
+			editor.replaceSelection(initialText);
 		} else {
-			if (selected) {
-				editor.replaceSelection(" ");
-			} else {
-				editor.setLine(mouseLine, " ");
-			}
+			editor.setLine(mouseLine, initialText);
 		}
-			
-		// Removes duplicate links
-		const set = new Set(foundLinks);
-		const iteratable = set.values();
-		let links = Array.from(iteratable);
-		
-		// Add a citation for each link
+
+		if (this.settings.enableGenerationNotifications) {
+			new Notice("Generating (1/2)");
+		}
+
+		// Get links
+		const links = text.match(/\bhttps?::\/\/\S+/gi) || text.match(/\bhttps?:\/\/\S+/gi);
+
+		if (links === null) {
+			new Notice("Invalid link(s).");
+			return;
+		}
+
+		// Create citation engine
 		const generator = new CitationGenerator(style, this.settings.includeDateAccessed);
 		await generator.createEngine();
 		
+		// Add links to engine
 		for (let i = 0; i < links.length; i++) {
 			const link = links[i];
 			const citation = await generator.addCitation(link);
 
 			if (citation === undefined) {
 				editor.setLine(mouseLine, text);
-
 				return;
 			}
 
 			if (this.settings.showGenerationText) {
 				editor.setLine(mouseLine, `Generating (${i}/${links.length})`);
-			}        
+			}  
 		}
 
-		// Get formatted citations
+		// Get citations
 		const bibliography = await generator.getBibliography(this.settings.sortByAlphabetical);
 
 		if (bibliography === undefined) {
@@ -202,6 +186,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 			return;
 		}
 
+		// Get citations in format
 		const formattedBibliography = await generator.getBibliographyInFormat(bibliography, this.settings.textFormat);
 
 		if (formattedBibliography === undefined) {
@@ -210,21 +195,23 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 			return;
 		}
 
-		let replaceString = "";
+		// Replace links with citation
 
-		const formattedLength = formattedBibliography.length;
+		let newSelection = text;
 
-		for (let i = 0; i < formattedLength; i++) {
-			replaceString += formattedBibliography[i].trim();
+		links.forEach((link: string, index: number) => {
+			newSelection = newSelection.replace(link, "!Bibliography" + index + "!")
+		});
 
-			if (formattedLength !== 1 && i !== formattedLength - 1) {
-				replaceString += "\n\n";
-			}
+		links.forEach((link: string, index: number) => {
+			newSelection = newSelection.replace("!Bibliography" + index + "!", formattedBibliography[index]);
+		});
+
+		// Replace selection
+		if (this.settings.enableGenerationNotifications) {
+			new Notice("Done (2/2)");
 		}
-
-		// Finish
-		editor.setLine(mouseLine, replaceString);
 		
-		this.notify("Done (2/2)");
+		editor.setLine(mouseLine, newSelection);
 	}
 }
