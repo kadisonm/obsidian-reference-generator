@@ -151,17 +151,12 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		}
 
 		// Get links
-		const foundLinks = text.match(/\bhttps?::\/\/\S+/gi) || text.match(/\bhttps?:\/\/\S+/gi);
+		const links = text.match(/\bhttps?::\/\/\S+/gi) || text.match(/\bhttps?:\/\/\S+/gi);
 
-		if (foundLinks === null) {
+		if (links === null) {
 			new Notice("Invalid link(s).");
 			return;
 		}
-
-		// Removes duplicate links
-		const set = new Set(foundLinks);
-		const iteratable = set.values();
-		let links = Array.from(iteratable);
 
 		// Create citation engine
 		const generator = new CitationGenerator(style, this.settings.includeDateAccessed);
@@ -205,7 +200,11 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		let newSelection = text;
 
 		links.forEach((link: string, index: number) => {
-			newSelection = newSelection.replace(link, formattedBibliography[index]);
+			newSelection = newSelection.replace(link, "!Bibliography" + index + "!")
+		});
+
+		links.forEach((link: string, index: number) => {
+			newSelection = newSelection.replace("!Bibliography" + index + "!", formattedBibliography[index]);
 		});
 
 		// Replace selection
