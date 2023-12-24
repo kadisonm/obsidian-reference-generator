@@ -1,13 +1,10 @@
 import { Editor, Notice, MarkdownView, Plugin, Platform } from 'obsidian';
-import { SettingsTab, ReferenceGeneratorSettings, DEFAULT_SETTINGS } from "./settings";
+import { SettingsTab, ReferenceGeneratorSettings, DEFAULT_SETTINGS, defaultLogo, selectLogo } from "./settings";
 import { SuggestStyleModal } from './suggest-modal'; 
 import { CitationGenerator } from './citation-generator';
 import { cslList } from "./csl/csl-list";
 import * as linkify from 'linkifyjs';
 import linkifyHtml from 'linkify-html';
-
-const defaultLogo = "file-text";
-const selectLogo = "scan";
 
 export default class ReferenceGeneratorPlugin extends Plugin {
 	settings: ReferenceGeneratorSettings;

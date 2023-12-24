@@ -27,6 +27,9 @@ export const DEFAULT_SETTINGS: ReferenceGeneratorSettings = {
 	enableGenerationNotifications: false,
 }
 
+export const defaultLogo = "refresh-cw";
+export const selectLogo = "box-select";
+
 export class SettingsTab extends PluginSettingTab {
 	plugin: ReferenceGeneratorPlugin;
 
