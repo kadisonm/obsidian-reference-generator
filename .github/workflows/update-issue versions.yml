@@ -1,8 +1,9 @@
 name: Update issue template versions
 
 on:
-    release:
-      types: [published]
+  release:
+    types: [published]
+  workflow_dispatch:
 
 jobs:
   update-versions:
@@ -21,4 +22,4 @@ jobs:
             git config --local user.name "GitHub Actions"
             git add .github/ISSUE_TEMPLATE/bug_report.yaml
             git commit -m "Update version options in bug report template"
-            git push
+            git push origin main
