@@ -87,9 +87,3 @@ describe("getBibliographyInFormat", () => {
         });
     });
 });
-
-describe("test action", () => {
-    test('action picks up fail', () => {
-        expect(false).toBe(true);
-    });
-});
