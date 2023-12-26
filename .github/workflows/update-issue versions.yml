@@ -22,4 +22,4 @@ jobs:
             git config --local user.name "GitHub Actions"
             git add --all
             git commit -m "Update version options in bug report template"
-            git push origin main
+            git push origin HEAD:master
