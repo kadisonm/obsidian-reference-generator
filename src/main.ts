@@ -8,14 +8,14 @@ import linkifyHtml from 'linkify-html';
 
 export default class ReferenceGeneratorPlugin extends Plugin {
 	settings: ReferenceGeneratorSettings;
-	lastGenerationTime: Date;
+	lastGenerationTime: number;
 
 	async onload() {
 		await this.loadSettings();
 
 		this.addSettingTab(new SettingsTab(this.app, this));
 
-		this.lastGenerationTime = new Date();
+		this.lastGenerationTime = 0;
 
 		// Default Style Command
 		this.addCommand({
@@ -122,14 +122,14 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 
 	async replaceLinks(editor: Editor, text: string, style: string, selected: boolean) {
 		// Cool down
-		const currentTime = new Date();
+		const currentTime = new Date().getTime();
 
-        if (currentTime.valueOf() - this.lastGenerationTime.valueOf() <= 1000) {
+        if (currentTime - this.lastGenerationTime <= 1000) {
             new Notice("You are generating too fast. Please try again.");
             return;
         }
 
-        this.lastGenerationTime = new Date();
+        this.lastGenerationTime = currentTime;
 
 		// Get file
 		const file = this.app.workspace.getActiveFile();
