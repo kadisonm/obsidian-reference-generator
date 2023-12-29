@@ -1,4 +1,4 @@
-import { requestSafely, getLocale, getStyle, delay, Author, Citation } from './helpers';
+import { requestSafely, getLocale, getStyle, Author, Citation } from './helpers';
 import TurndownService from 'turndown'
 import markdownToTxt from 'markdown-to-txt';
 import CSL from 'citeproc';
@@ -10,7 +10,6 @@ export class CitationGenerator {
     style: string;
     locale: string;
     showAccessed: boolean;
-    lastCalled: Date;
 
     constructor(style: string, showAccessed: boolean) {
 		this.style = style;
@@ -18,7 +17,6 @@ export class CitationGenerator {
 
         this.citations = new Array();
         this.citationIDs = new Array();
-        this.lastCalled = new Date();
 	}
 
     async createEngine() {
@@ -49,17 +47,17 @@ export class CitationGenerator {
         return true;
     }
 
-    async addCitation(url: string) {
+    async addCitation(url: string, lastCalled: number) {
         // Make sure API can only be called at 1rps
-        const timeDifference = new Date().valueOf() - this.lastCalled.valueOf();
-        const waitTime = timeDifference <= 1000 ? 1000 - timeDifference : 0;
+        const currentTime = new Date().getTime();
+        const timeDifference = currentTime - lastCalled
 
-        await delay(waitTime);
+        if (timeDifference <= 1000) {
+            await sleep(1000 - timeDifference);
 
-        this.lastCalled = new Date();
+        }
 
         // Get citation data from Citoid API
-
         const escapedURL = encodeURIComponent(url);
 
         const response = await requestSafely({

@@ -160,10 +160,13 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 		const generator = new CitationGenerator(style, this.settings.includeDateAccessed);
 		await generator.createEngine();
 		
+		let lastCalled = 0;
+
 		// Add links to engine
 		for (let i = 0; i < links.length; i++) {
 			const link = links[i];
-			const citation = await generator.addCitation(link.href);
+			const citation = await generator.addCitation(link.href, lastCalled);
+			lastCalled = new Date().getTime();
 
 			if (citation === undefined) {
 				editor.setLine(mouseLine, text);
