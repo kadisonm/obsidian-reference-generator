@@ -44,17 +44,8 @@ export class SettingsTab extends PluginSettingTab {
 		containerEl.empty();
 
         // Display 'other' style
-        const otherDiv = containerEl.createEl("div");
-
-        if (this.plugin.settings.defaultStyle !== "other") {
-            otherDiv.textContent = "";
-        } else {
-            const found = cslList.find((value) => value.id === this.plugin.settings.currentStyle);
-
-            if (found) {
-                otherDiv.textContent = "Other: " + found.label;
-            } 
-        }
+        const selectedStyle = containerEl.createEl("p", {cls:"test", text: "Selected style: " + this.plugin.settings.currentStyle});
+        selectedStyle.toggleClass("hidden", !(this.plugin.settings.defaultStyle === "other"));
 
         // Select default style
         new Setting(containerEl)
@@ -71,7 +62,6 @@ export class SettingsTab extends PluginSettingTab {
             .setValue(this.plugin.settings.defaultStyle)
             .onChange(async (style) => {
                 this.plugin.settings.defaultStyle = style;
-                otherDiv.toggleClass("other-hide", this.plugin.settings.defaultStyle !== "other");
 
                 if (style === "other") {
                     new SuggestStyleModal(this.app, async (result) => {
@@ -81,8 +71,8 @@ export class SettingsTab extends PluginSettingTab {
                             if (found) {
                                 this.plugin.settings.currentStyle = found.id;
 
-                                otherDiv.textContent = "Other: " + found.label;
-                                new Notice("Updated style!");
+                                selectedStyle.textContent = "Selected style: " + this.plugin.settings.currentStyle;
+                                selectedStyle.toggleClass("hidden", false);
 
                                 await this.plugin.saveSettings();   
                             } else {
@@ -99,7 +89,7 @@ export class SettingsTab extends PluginSettingTab {
                     this.plugin.settings.currentStyle = style;
                     this.plugin.settings.defaultStyle = style;
 
-                    otherDiv.textContent = "";
+                    selectedStyle.toggleClass("hidden", true);
                     
                     await this.plugin.saveSettings();
                 }
