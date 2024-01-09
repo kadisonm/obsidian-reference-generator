@@ -51,7 +51,7 @@ Select multiple links, right click and follow the same steps for generating a re
 This is because the requested site could not be reached. This can happen due to network connectivity issues, or the requested page not existing on the site (404 error).
 
 ## Contributors
-Thanks to @FeralFlora and @mariomui for helping steer this project in the right direction. Especially for coming up with the idea to use Citeproc-js and Zotero trackers.
+Thanks to @FeralFlora and @mariomui for helping steer this project in the right direction. Especially for coming up with the idea to use Citeproc-js and Zotero translators.
 
 ## Show your support
 
