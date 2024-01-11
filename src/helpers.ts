@@ -1,4 +1,4 @@
-import { requestUrl, Notice, RequestUrlParam } from "obsidian";
+import { requestUrl, Notice, RequestUrlParam, htmlToMarkdown } from "obsidian";
 
 export interface Citation {
   "id": number,
@@ -18,6 +18,11 @@ export interface Citation {
 export interface Author {
   "given"?: string, 
   "family"?: string
+}
+
+// to make citation-generator.ts jest testable
+export function getHtmlToMarkdown(html: string | HTMLElement | Document | DocumentFragment) {
+  return htmlToMarkdown(html);
 }
 
 export async function requestSafely(request: string | RequestUrlParam, rawUrl?: string) {

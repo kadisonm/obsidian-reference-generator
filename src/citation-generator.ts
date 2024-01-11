@@ -1,5 +1,4 @@
-import { requestSafely, getLocale, getStyle, Author, Citation } from './helpers';
-import TurndownService from 'turndown'
+import { requestSafely, getHtmlToMarkdown, getLocale, getStyle, Author, Citation } from './helpers';
 import markdownToTxt from 'markdown-to-txt';
 import CSL from 'citeproc';
 
@@ -160,15 +159,14 @@ export class CitationGenerator {
 
         for (let i = 0; i < bibliography.length; i++) {
             const citation = bibliography[i];
-            const turndownService = new TurndownService();
 
             if (format === "html") {
                 newBibliography.push(bibliography[i]);
             } else if(format === "markdown") {
-                const markdown = turndownService.turndown(bibliography[i]);
+                const markdown = getHtmlToMarkdown(bibliography[i]);
                 newBibliography.push(markdown);
             } else if(format === "plaintext") {
-                const markdown = turndownService.turndown(bibliography[i]);
+                const markdown = getHtmlToMarkdown(bibliography[i]);
                 newBibliography.push(markdownToTxt(markdown));
             }
         }
