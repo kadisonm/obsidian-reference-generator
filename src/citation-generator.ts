@@ -69,7 +69,7 @@ export class CitationGenerator {
             return;
         }
 
-        const responseJson = JSON.parse(response.text)[0];
+        const responseJson = response.json[0];
 
         // Create CSL format JSON data from response
 
@@ -111,7 +111,7 @@ export class CitationGenerator {
             const date = new Date(responseJson.date);
     
             citation["issued"] = {
-                "date-parts": [[ date.getFullYear(), date.getMonth(), date.getDate() ]]
+                "date-parts": [[ date.getFullYear(), date.getMonth() + 1, date.getDate() ]]
             };
         }
     
@@ -119,7 +119,7 @@ export class CitationGenerator {
             const accessed = new Date();
     
             citation["accessed"] = {
-                "date-parts": [[ accessed.getFullYear(), accessed.getMonth(), accessed.getDate() ]]
+                "date-parts": [[ accessed.getFullYear(), accessed.getMonth() + 1, accessed.getDate() ]]
             };
         }
 

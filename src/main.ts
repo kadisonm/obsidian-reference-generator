@@ -131,8 +131,7 @@ export default class ReferenceGeneratorPlugin extends Plugin {
 
         this.lastGenerationTime = currentTime;
 
-		// Get file
-		const file = this.app.workspace.getActiveFile();
+		// Get mouse position
 		const mouseLine = editor.getCursor("from").line;
 
 		// Get links
