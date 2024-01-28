@@ -24,7 +24,7 @@ On the bright side, there is a fix for this. A different implementation of the t
 - A variety of customisation and settings
 
 ## Installation
-- Download the [latest release](https://github.com/kadisonm/obsidian-reference-generator/releases) and manually add the `main.js`, `manifest.json`, `styles.css` assets to `your-vault\.obsidian\plugins\reference-generator`
+- Install through [Obsidian's Community Plugins](https://obsidian.md/plugins) and add directly to your vault.
 
 ## Network usage
 This plugins requires internet access for the following:
