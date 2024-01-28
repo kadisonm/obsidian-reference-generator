@@ -38,12 +38,12 @@ A default citation style can be selected in the plugin settings. This allows you
 ### Generating a reference
 Right click on a link to open the context menu and display the generation options. You can either select a style or use your default (depending on your preferences either one of these can be disabled via settings). Alternatively, a command can be used for either.
 
-![Obsidian_ZG6ZxvJQhJ](https://github.com/kadisonm/obsidian-reference-generator/assets/134670047/dde9379f-4a4b-4d2d-9253-300fd5c83e17)
+![Obsidian_jk3RtuMY50](https://github.com/kadisonm/obsidian-reference-generator/assets/134670047/c704b607-aa0e-4c1c-b8a8-54668565e1bb)
 
 ### Generating multiple references at a time
 Select multiple links, right click and follow the same steps for generating a reference. Each link roughly takes 1-3 seconds to generate but they can take longer. There are plans in the future to heavily reduce this time. Text inbetween links is saved, but it will treat all links as a bibliography regardless of what text is inbetween. If you would like two seperately sorted bibliographies, it is best to generate these seperately.
 
-![image](https://github.com/kadisonm/obsidian-reference-generator/assets/134670047/6941ba65-ea57-4181-a83f-b03bd3169567)
+![Obsidian_02WQ7bYSf9](https://github.com/kadisonm/obsidian-reference-generator/assets/134670047/3bb408fc-ecc8-40c3-bb25-80f716606622)
 
 *Image: Example of selecting multiple links to generate*
 
