@@ -5,7 +5,7 @@
 Reference Generator
 </h1>
 
-<h4 align="center">An <a href="https://obsidian.md/">Obsidian</a> plugin that quickly generates bibliographies from links in any style including Harvard, MLA, APA and more.</h4>
+<h4 align="center">An <a href="https://obsidian.md/">Obsidian</a> plugin that turns links into bibliographies in styles like Harvard, MLA, APA, and more.</h4>
 
 ---
 
