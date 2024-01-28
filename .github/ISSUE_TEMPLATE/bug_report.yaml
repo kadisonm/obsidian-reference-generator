@@ -38,6 +38,8 @@ body:
     attributes:
       label: Plugin version?
       options:
+        - 1.0.2
+        - 1.0.1
         - 1.0.0
         - 0.1.0
       default: 0
