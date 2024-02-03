@@ -1,6 +1,6 @@
 {
 	"name": "reference-generator",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Turn links into bibliographies in styles like Harvard, MLA, APA, and more.",
 	"main": "main.js",
 	"scripts": {

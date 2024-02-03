@@ -1,7 +1,7 @@
 {
 	"id": "reference-generator",
 	"name": "Reference Generator",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minAppVersion": "0.15.0",
 	"description": "Turn links into bibliographies in styles like Harvard, MLA, APA, and more.",
 	"author": "Kadison McLellan",
