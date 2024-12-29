@@ -9,7 +9,7 @@ Reference Generator
 
 ---
 
-This plugin is **not** an official Obsidian plugin.
+This plugin is **not** an official Obsidian plugin and is licensed under the [MIT](https://github.com/kadisonm/obsidian-reference-generator/blob/master/LICENSE) license.
 
 To track the development, please visit the [project page](https://github.com/users/kadisonm/projects/2/).
 
@@ -52,6 +52,13 @@ This is because the requested site could not be reached. This can happen due to 
 
 ## Contributors
 Thanks to @FeralFlora and @mariomui for helping steer this project in the right direction. Especially for coming up with the idea to use Citeproc-js and Zotero translators.
+
+## Attribution
+The [Zotero Translation Server](https://github.com/zotero/translation-server) is licensed under the [GNU Affero General Public License](https://www.gnu.org/licenses/agpl-3.0.en.html) license.
+
+The [Citoid API (Wikimedia REST API)](https://en.wikipedia.org/api/rest_v1/#/) is licensed under the [Apache V2](https://www.apache.org/licenses/LICENSE-2.0) license.
+
+The citation [styles](https://github.com/citation-style-language/styles) and [locales](https://github.com/citation-style-language/locales) are property of the [Citation Style Language](https://citationstyles.org/) project and is licensed under the [Creative Commons Attribution-ShareAlike 3.0 Unported](https://creativecommons.org/licenses/by-sa/3.0/) license.
 
 ## Show your support
 
