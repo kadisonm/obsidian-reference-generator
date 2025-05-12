@@ -1,3 +1,24 @@
+---
+
+<div align="center">
+▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄
+
+<h3>⚠️ DEPRECATION NOTICE ⚠️</h3>
+THIS PROJECT IS NO LONGER ACTIVELY MAINTAINED
+
+Breaking bugs *may* be addressed, but **no new features** will be added in the near future.
+
+It is recommended you check out [Zotero](https://www.zotero.org/) and the [Zotero Obsidian Integration](https://github.com/mgmeyers/obsidian-zotero-integration) plugin.
+
+
+▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄
+</div>
+
+---
+
+
+
+
 <h1 align="center">
 <sub>
 <img src="https://github.com/kadisonm/obsidian-reference-generator/assets/134670047/d8b5fa31-7ba8-47c1-b1ca-aeecf52f3568" width="45">
