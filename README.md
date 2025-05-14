@@ -1,4 +1,5 @@
----
+</br>
+</br>
 
 <div align="center">
 ▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄
@@ -14,10 +15,8 @@ It is recommended you check out [Zotero](https://www.zotero.org/) and the [Zoter
 ▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄
 </div>
 
----
-
-
-
+</br>
+</br>
 
 <h1 align="center">
 <sub>
