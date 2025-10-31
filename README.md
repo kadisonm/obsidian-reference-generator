@@ -82,8 +82,8 @@ The citation [styles](https://github.com/citation-style-language/styles) and [lo
 
 ## Show your support
 
-If you want to support me you can do so [here](https://www.buymeacoffee.com/kadisonm), but please know that this is not an expectation and this plugin is completely free.
+If you want to support me you can do so [here](https://github.com/sponsors/kadisonm), but please know that this is not an expectation and this plugin is completely free.
 
-[<img src="https://github.com/kadisonm/obsidian-reference-generator/assets/134670047/826ead37-1265-42b1-b171-928d1e17035f" width="200">](https://www.buymeacoffee.com/kadisonm)
+[<img src="https://github.com/kadisonm/obsidian-reference-generator/assets/134670047/826ead37-1265-42b1-b171-928d1e17035f" width="200">](https://github.com/sponsors/kadisonm)
 
 Thank you so much for using my plugin.
